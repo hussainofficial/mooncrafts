@@ -2,8 +2,8 @@
 
 Step-by-step setup for running this project after cloning it from GitHub. The repo has two parts:
 
-- `luxora-backend` — Node.js/Express API (MySQL database)
-- `luxora-jewelry` — Angular frontend
+- `mooncraft-backend` — Node.js/Express API (MySQL database)
+- `mooncraft-jewelry` — Angular frontend
 
 ## Prerequisites
 
@@ -23,10 +23,10 @@ git clone https://github.com/hussainofficial/mooncrafts.git
 cd mooncrafts
 ```
 
-## 2. Backend setup (`luxora-backend`)
+## 2. Backend setup (`mooncraft-backend`)
 
 ```bash
-cd luxora-backend
+cd mooncraft-backend
 npm install
 ```
 
@@ -45,7 +45,7 @@ mysql -u root -p < DATABASE_MIGRATION_IMAGE_FIX.sql
 mysql -u root -p < DATABASE_MIGRATION_LOCATIONS.sql
 mysql -u root -p < DATABASE_MIGRATION_ORDERS.sql
 mysql -u root -p < DATABASE_MIGRATION_PAYMENT_TABLES.sql
-mysql -u root -p < CREATE_ADMIN_USER.sql   # optional: creates admin@luxora.com / Admin@123
+mysql -u root -p < CREATE_ADMIN_USER.sql   # optional: creates admin@mooncraft.com / Admin@123
 ```
 
 (Or open each file in MySQL Workbench with **File → Open SQL Script** and execute in the same order.)
@@ -62,7 +62,7 @@ Edit `.env` and set your own values:
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
-DB_NAME=luxora_jewelry
+DB_NAME=mooncraft_jewelry
 DB_PORT=3306
 
 PORT=5000
@@ -92,23 +92,23 @@ Server running on http://localhost:5000
 
 Leave this terminal running.
 
-## 3. Frontend setup (`luxora-jewelry`)
+## 3. Frontend setup (`mooncraft-jewelry`)
 
 Open a **new terminal**:
 
 ```bash
-cd mooncrafts/luxora-jewelry
+cd mooncrafts/mooncraft-jewelry
 npm install
 ng serve
 ```
 
-Visit **http://localhost:4200** — the site should load and talk to the backend at `http://localhost:5000` automatically (the API URL is hardcoded per-service, e.g. `luxora-jewelry/src/app/core/services/auth.service.ts`).
+Visit **http://localhost:4200** — the site should load and talk to the backend at `http://localhost:5000` automatically (the API URL is hardcoded per-service, e.g. `mooncraft-jewelry/src/app/core/services/auth.service.ts`).
 
 ## 4. Verify everything works
 
 - Backend: `http://localhost:5000/api/v1/auth/me` should respond (401 without a token is expected — it confirms the server is up).
 - Frontend: homepage loads at `http://localhost:4200` with no console errors.
-- Try registering a user or logging in as admin (`admin@luxora.com` / `Admin@123`, if you ran `CREATE_ADMIN_USER.sql`) — change this password immediately after first login.
+- Try registering a user or logging in as admin (`admin@mooncraft.com` / `Admin@123`, if you ran `CREATE_ADMIN_USER.sql`) — change this password immediately after first login.
 
 ## Troubleshooting
 
