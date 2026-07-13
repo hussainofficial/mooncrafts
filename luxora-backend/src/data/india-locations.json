@@ -1,0 +1,222 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "name": "Andhra Pradesh",
+      "code": "AP"
+    },
+    {
+      "id": 2,
+      "name": "Arunachal Pradesh",
+      "code": "AR"
+    },
+    {
+      "id": 3,
+      "name": "Assam",
+      "code": "AS"
+    },
+    {
+      "id": 4,
+      "name": "Bihar",
+      "code": "BR"
+    },
+    {
+      "id": 5,
+      "name": "Chhattisgarh",
+      "code": "CT"
+    },
+    {
+      "id": 6,
+      "name": "Goa",
+      "code": "GA"
+    },
+    {
+      "id": 7,
+      "name": "Gujarat",
+      "code": "GJ"
+    },
+    {
+      "id": 8,
+      "name": "Haryana",
+      "code": "HR"
+    },
+    {
+      "id": 9,
+      "name": "Himachal Pradesh",
+      "code": "HP"
+    },
+    {
+      "id": 10,
+      "name": "Jharkhand",
+      "code": "JH"
+    },
+    {
+      "id": 11,
+      "name": "Karnataka",
+      "code": "KA"
+    },
+    {
+      "id": 12,
+      "name": "Kerala",
+      "code": "KL"
+    },
+    {
+      "id": 13,
+      "name": "Madhya Pradesh",
+      "code": "MP"
+    },
+    {
+      "id": 14,
+      "name": "Maharashtra",
+      "code": "MH"
+    },
+    {
+      "id": 15,
+      "name": "Manipur",
+      "code": "MN"
+    },
+    {
+      "id": 16,
+      "name": "Meghalaya",
+      "code": "ML"
+    },
+    {
+      "id": 17,
+      "name": "Mizoram",
+      "code": "MZ"
+    },
+    {
+      "id": 18,
+      "name": "Nagaland",
+      "code": "NL"
+    },
+    {
+      "id": 19,
+      "name": "Odisha",
+      "code": "OD"
+    },
+    {
+      "id": 20,
+      "name": "Punjab",
+      "code": "PB"
+    },
+    {
+      "id": 21,
+      "name": "Rajasthan",
+      "code": "RJ"
+    },
+    {
+      "id": 22,
+      "name": "Sikkim",
+      "code": "SK"
+    },
+    {
+      "id": 23,
+      "name": "Tamil Nadu",
+      "code": "TN"
+    },
+    {
+      "id": 24,
+      "name": "Telangana",
+      "code": "TG"
+    },
+    {
+      "id": 25,
+      "name": "Tripura",
+      "code": "TR"
+    },
+    {
+      "id": 26,
+      "name": "Uttar Pradesh",
+      "code": "UP"
+    },
+    {
+      "id": 27,
+      "name": "Uttarakhand",
+      "code": "UK"
+    },
+    {
+      "id": 28,
+      "name": "West Bengal",
+      "code": "WB"
+    },
+    {
+      "id": 29,
+      "name": "Andaman and Nicobar Islands",
+      "code": "AN"
+    },
+    {
+      "id": 30,
+      "name": "Chandigarh",
+      "code": "CH"
+    },
+    {
+      "id": 31,
+      "name": "Dadra and Nagar Haveli and Daman and Diu",
+      "code": "DN"
+    },
+    {
+      "id": 32,
+      "name": "Lakshadweep",
+      "code": "LD"
+    },
+    {
+      "id": 33,
+      "name": "Delhi",
+      "code": "DL"
+    },
+    {
+      "id": 34,
+      "name": "Puducherry",
+      "code": "PY"
+    },
+    {
+      "id": 35,
+      "name": "Ladakh",
+      "code": "LA"
+    },
+    {
+      "id": 36,
+      "name": "Jammu and Kashmir",
+      "code": "JK"
+    }
+  ],
+  "cities": {
+    "AP": ["Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Nellore", "Kurnool", "Rajahmundry", "Eluru"],
+    "AR": ["Itanagar", "Naharlagun", "Papum Pare", "Pasighat", "Tezu"],
+    "AS": ["Guwahati", "Silchar", "Dibrugarh", "Nagaon", "Bongaigaon", "Tinsukia"],
+    "BR": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga", "Bihar Sharif"],
+    "CT": ["Raipur", "Bilaspur", "Durg", "Rajnandgaon", "Jagdalpur"],
+    "GA": ["Panaji", "Margao", "Vasco da Gama", "Mapusa"],
+    "GJ": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Jamnagar", "Bhavnagar", "Gandhinagar"],
+    "HR": ["Faridabad", "Gurgaon", "Hisar", "Rohtak", "Panipat", "Karnal"],
+    "HP": ["Shimla", "Mandi", "Kangra", "Solan", "Kullu"],
+    "JH": ["Ranchi", "Dhanbad", "Giridih", "Bokaro", "Jamshedpur"],
+    "KA": ["Bangalore", "Mysore", "Mangalore", "Hubballi", "Bellary", "Davangere"],
+    "KL": ["Kochi", "Thiruvananthapuram", "Kozhikode", "Thrissur", "Alappuzha"],
+    "MP": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar"],
+    "MH": ["Mumbai", "Pune", "Nagpur", "Thane", "Aurangabad", "Nashik", "Kolhapur"],
+    "MN": ["Imphal", "Bishnupur"],
+    "ML": ["Shillong", "Tura", "Cherrapunji"],
+    "MZ": ["Aizawl", "Lunglei", "Saiha"],
+    "NL": ["Kohima", "Dimapur"],
+    "OD": ["Bhubaneswar", "Cuttack", "Rourkela", "Sambalpur", "Berhampur"],
+    "PB": ["Chandigarh", "Amritsar", "Ludhiana", "Jalandhar", "Patiala"],
+    "RJ": ["Jaipur", "Jodhpur", "Ajmer", "Udaipur", "Kota", "Bikaner"],
+    "SK": ["Gangtok", "Namchi", "Geyzing"],
+    "TN": ["Chennai", "Coimbatore", "Madurai", "Salem", "Tirunelveli", "Erode"],
+    "TG": ["Hyderabad", "Warangal", "Nizamabad", "Khammam"],
+    "TR": ["Agartala", "Udaipur"],
+    "UP": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Meerut", "Varanasi", "Allahabad"],
+    "UK": ["Dehradun", "Haridwar", "Nainital", "Almora"],
+    "WB": ["Kolkata", "Howrah", "Durgapur", "Siliguri", "Darjeeling"],
+    "AN": ["Port Blair", "Campbell Bay"],
+    "CH": ["Chandigarh"],
+    "DN": ["Silvassa", "Daman", "Diu"],
+    "LD": ["Kavaratti"],
+    "DL": ["New Delhi", "Delhi", "East Delhi", "North Delhi", "South Delhi", "West Delhi"],
+    "PY": ["Puducherry", "Karaikal", "Mahe", "Yanam"],
+    "LA": ["Leh", "Kargil"],
+    "JK": ["Srinagar", "Jammu", "Baramulla", "Anantnag", "Samba"]
+  }
+}

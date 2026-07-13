@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(taskkill /PID 800 /F)",
+      "PowerShell(New-Item -ItemType File -Path 'C:\\\\Users\\\\hussa\\\\luxora-backend\\\\PRIORITY_2_API_GUIDE.md' -Force)",
+      "PowerShell(New-Item -ItemType File -Path 'C:\\\\Users\\\\hussa\\\\luxora-backend\\\\PAYMENT_RECORDING_APPROACH.md' -Force)",
+      "PowerShell(New-Item -ItemType File -Path 'C:\\\\Users\\\\hussa\\\\luxora-backend\\\\ARCHITECTURE_REVIEW_REPORT.md' -Force)",
+      "PowerShell(curl -s http://localhost:5000/api/v1/products)",
+      "PowerShell(jq .)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:5000/api/v1/products\" -Method Get)",
+      "Read(//c/Users/hussa/AppData/Local/Temp/claude/c--Users-hussa-jewelry/cc199742-efea-47f2-b172-794eebe9e8a7/tasks/**)",
+      "PowerShell(netstat -ano)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Where-Object {$_.ProcessName -eq \"node\"} | Stop-Process -Force; Start-Sleep -Seconds 2; cd c:\\\\Users\\\\hussa\\\\luxora-jewelry; npm start 2>&1)",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force)",
+      "Read(//c/Users/husha/AppData/Local/Temp/claude/c--Users-hussa-luxora-jewelry/cc199742-efea-47f2-b172-794eebe9e8a7/tasks/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\husha\\luxora-jewelry",
+      "C:\\Users\\hussa\\luxora-backend"
+    ]
+  }
+}
