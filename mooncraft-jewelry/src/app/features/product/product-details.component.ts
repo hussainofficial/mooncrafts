@@ -32,23 +32,113 @@ import Drift from 'drift-zoom';
       </div>
 
       <div class="max-w-7xl mx-auto px-4 py-8" *ngIf="product()">
-        <div class="grid grid-cols-2 gap-8">
-          <!-- Image Section - Main Image (Left) with Drift Zoom -->
+        <div class="grid grid-cols-2 gap-8 lg:gap-12">
+          <!-- Image Section - Gallery (Left) -->
           <div class="space-y-4">
             <!-- Main Image with Drift.js Zoom -->
             <div class="bg-white rounded-lg overflow-hidden shadow-lg">
               <img
                 #productImage
-                [src]="product()?.image"
+                [src]="getCurrentImage()"
                 [alt]="product()?.name"
                 class="w-full aspect-square object-cover cursor-crosshair"
                 style="display: block;">
             </div>
 
             <!-- Thumbnail Gallery -->
-            <div class="flex gap-2">
-              <div class="w-20 h-20 bg-white rounded-lg shadow cursor-pointer border-2 border-rose-500 overflow-hidden">
+            <div class="flex gap-2 overflow-x-auto pb-2">
+              <!-- Main image thumbnail -->
+              <div
+                (click)="selectImage(-1)"
+                [class.border-rose-500]="selectedImageIndex() === -1"
+                [class.border-gray-300]="selectedImageIndex() !== -1"
+                class="w-20 h-20 flex-shrink-0 bg-white rounded-lg shadow cursor-pointer border-2 overflow-hidden hover:border-rose-400 transition-all">
                 <img [src]="product()?.image" [alt]="product()?.name" class="w-full h-full object-cover">
+              </div>
+
+              <!-- Additional images from gallery -->
+              <div
+                *ngFor="let img of product()?.images; let i = index"
+                (click)="selectImage(i)"
+                [class.border-rose-500]="selectedImageIndex() === i"
+                [class.border-gray-300]="selectedImageIndex() !== i"
+                class="w-20 h-20 flex-shrink-0 bg-white rounded-lg shadow cursor-pointer border-2 overflow-hidden hover:border-rose-400 transition-all relative group">
+                <img [src]="img" [alt]="'Image ' + (i + 1)" class="w-full h-full object-cover">
+                <span class="absolute top-1 right-1 bg-gray-900 text-white text-xs rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {{ i + 1 }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Image counter -->
+            <div *ngIf="product()?.images && product()!.images!.length > 0" class="text-center text-sm text-gray-600">
+              {{ selectedImageIndex() === -1 ? 'Main' : 'Image ' + (selectedImageIndex() + 1) }} / {{ 1 + (product()?.images?.length || 0) }}
+            </div>
+
+            <!-- Fullscreen Button -->
+            <button
+              (click)="openImageModal()"
+              class="w-full mt-2 px-4 py-2 text-sm text-rose-600 hover:text-rose-700 font-semibold border border-rose-300 rounded-lg hover:bg-rose-50 transition-colors">
+              🔍 View Full Size
+            </button>
+          </div>
+
+          <!-- Image Modal (Lightbox) -->
+          <div *ngIf="showImageModal()" class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-2 sm:p-4">
+            <!-- Close Button -->
+            <button
+              (click)="closeImageModal()"
+              class="absolute top-4 left-4 text-white hover:text-gray-300 text-2xl sm:text-3xl font-bold transition-colors">
+              ✕
+            </button>
+
+            <!-- Main Image Container -->
+            <div class="relative w-full max-w-4xl">
+              <!-- Main Image -->
+              <img
+                [src]="getCurrentImage()"
+                [alt]="product()?.name"
+                class="w-full h-auto max-h-[70vh] object-contain">
+
+              <!-- Left Arrow -->
+              <button
+                (click)="prevImage()"
+                class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 sm:-translate-x-16 text-white hover:text-gray-300 transition-colors">
+                <span class="text-3xl sm:text-5xl font-bold">‹</span>
+              </button>
+
+              <!-- Right Arrow -->
+              <button
+                (click)="nextImage()"
+                class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 sm:translate-x-16 text-white hover:text-gray-300 transition-colors">
+                <span class="text-3xl sm:text-5xl font-bold">›</span>
+              </button>
+
+              <!-- Image Counter -->
+              <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded text-sm">
+                {{ selectedImageIndex() === -1 ? '1' : selectedImageIndex() + 2 }} / {{ 1 + (product()?.images?.length || 0) }}
+              </div>
+            </div>
+
+            <!-- Thumbnails at Bottom -->
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+              <div class="flex justify-center gap-2 flex-wrap">
+                <!-- Main image thumbnail -->
+                <button
+                  (click)="selectImage(-1)"
+                  [class.ring-2]="selectedImageIndex() === -1"
+                  class="w-12 h-12 sm:w-16 sm:h-16 rounded border border-white/30 hover:border-white overflow-hidden transition-all">
+                  <img [src]="product()?.image" [alt]="product()?.name" class="w-full h-full object-cover">
+                </button>
+
+                <!-- Additional images thumbnails -->
+                <button
+                  *ngFor="let img of product()?.images; let i = index"
+                  (click)="selectImage(i)"
+                  [class.ring-2]="selectedImageIndex() === i"
+                  class="w-12 h-12 sm:w-16 sm:h-16 rounded border border-white/30 hover:border-white overflow-hidden transition-all">
+                  <img [src]="img" [alt]="'Image ' + (i + 1)" class="w-full h-full object-cover">
+                </button>
               </div>
             </div>
           </div>
@@ -153,14 +243,56 @@ import Drift from 'drift-zoom';
         <!-- Related Products (Optional) -->
         <div class="mt-16 border-t pt-12 col-span-12">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">You might also like</h2>
-          <div class="grid grid-cols-4 gap-6">
-            <div *ngFor="let item of relatedProducts()" class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
-              <div class="aspect-square bg-gray-100 rounded-t-lg overflow-hidden">
-                <img [src]="item.image" [alt]="item.name" class="w-full h-full object-cover hover:scale-110 transition-transform duration-300">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div *ngFor="let item of relatedProducts()"
+              class="bg-white rounded-lg shadow hover:shadow-xl transition-all duration-300 overflow-hidden group relative">
+
+              <!-- Product Image Container -->
+              <div class="aspect-square bg-gray-100 rounded-t-lg overflow-hidden relative">
+                <img
+                  [src]="item.image"
+                  [alt]="item.name"
+                  (click)="goToProduct(item.id)"
+                  class="w-full h-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer">
+
+                <!-- Wishlist Button (Top Right) -->
+                <button
+                  (click)="toggleRelatedWishlist(item.id, $event)"
+                  class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-rose-100 transition-colors z-10"
+                  [class.bg-rose-100]="isRelatedInWishlist(item.id)"
+                  [class.text-rose-600]="isRelatedInWishlist(item.id)"
+                  [class.text-gray-700]="!isRelatedInWishlist(item.id)">
+                  <span class="text-lg">{{ isRelatedInWishlist(item.id) ? '❤️' : '🤍' }}</span>
+                </button>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold text-gray-900 text-sm mb-1">{{ item.name }}</h3>
-                <p class="text-rose-600 font-bold">₹{{ item.price }}</p>
+
+              <!-- Product Details -->
+              <div class="p-4 space-y-3">
+                <!-- Product Name & Price -->
+                <div (click)="goToProduct(item.id)" class="cursor-pointer hover:opacity-80 transition-opacity">
+                  <h3 class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{{ item.name }}</h3>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-yellow-400">★</span>
+                    <span class="font-semibold text-gray-900 text-sm">{{ item.rating }}</span>
+                    <span class="text-gray-500 text-xs">({{ item.reviews }})</span>
+                  </div>
+                  <p class="text-rose-600 font-bold text-lg">₹{{ item.price }}</p>
+                </div>
+
+                <!-- Add to Cart Button (appears on hover) -->
+                <button
+                  (click)="addRelatedToCart(item, $event)"
+                  class="w-full bg-rose-500 text-white py-2 rounded-lg font-semibold hover:bg-rose-600 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
+                  <span>🛒</span>
+                  <span>Add to Cart</span>
+                </button>
+
+                <!-- View Details Link -->
+                <button
+                  (click)="goToProduct(item.id)"
+                  class="w-full text-center text-rose-600 font-semibold text-sm hover:underline py-1 opacity-0 group-hover:opacity-100">
+                  View Details →
+                </button>
               </div>
             </div>
           </div>
@@ -183,6 +315,13 @@ import Drift from 'drift-zoom';
     .aspect-square {
       aspect-ratio: 1;
     }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   `]
 })
 export class ProductDetailsComponent implements OnInit, AfterViewInit {
@@ -190,6 +329,8 @@ export class ProductDetailsComponent implements OnInit, AfterViewInit {
 
   product = signal<Product | null>(null);
   relatedProducts = signal<Product[]>([]);
+  selectedImageIndex = signal<number>(-1);
+  showImageModal = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -204,15 +345,16 @@ export class ProductDetailsComponent implements OnInit, AfterViewInit {
     this.route.params.subscribe(params => {
       const id = params['id'];
       if (id) {
-        const loadProductData = () => {
-          const allProducts = this.productService.products();
-          const found = allProducts.find(p => p.id === id);
-          this.product.set(found || null);
+        const loadProductData = async () => {
+          // Load product with gallery images
+          const product = await this.productService.getProductWithGallery(id);
+          this.product.set(product);
 
-          if (found) {
+          if (product) {
+            const allProducts = this.productService.products();
             this.relatedProducts.set(
               allProducts
-                .filter(p => p.category === found.category && p.id !== found.id)
+                .filter(p => p.category === product.category && p.id !== product.id)
                 .slice(0, 4)
             );
           }
@@ -300,5 +442,107 @@ export class ProductDetailsComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.router.navigate(['/']);
+  }
+
+  getCurrentImage(): string {
+    const prod = this.product();
+    if (!prod) return '';
+
+    const index = this.selectedImageIndex();
+    if (index === -1) {
+      return prod.image;
+    }
+
+    return prod.images && prod.images[index] ? prod.images[index] : prod.image;
+  }
+
+  selectImage(index: number) {
+    this.selectedImageIndex.set(index);
+
+    this.ngZone.runOutsideAngular(() => {
+      setTimeout(() => {
+        if (this.productImage?.nativeElement) {
+          try {
+            new Drift(this.productImage.nativeElement, {
+              paneWidth: 350,
+              paneHeight: 350,
+              inlinePane: false,
+              containInline: false,
+              sourceAttribute: 'src',
+              zoomFactor: 2.5,
+              onShow: function() {
+                const pane = document.querySelector('.drift-pane') as HTMLElement;
+                if (pane) {
+                  pane.style.position = 'absolute';
+                  pane.style.top = '0';
+                  pane.style.left = (this.productImage.nativeElement.offsetWidth + 15) + 'px';
+                  pane.style.display = 'block';
+                }
+              }
+            });
+          } catch (error) {
+            console.log('Drift already initialized or error:', error);
+          }
+        }
+      }, 100);
+    });
+  }
+
+  goToProduct(productId: string) {
+    this.router.navigate(['/product', productId]);
+  }
+
+  addRelatedToCart(item: Product, event: Event) {
+    event.stopPropagation();
+    this.cartService.addToCart(item);
+  }
+
+  toggleRelatedWishlist(productId: string, event: Event) {
+    event.stopPropagation();
+    this.userService.toggleWishlist(productId);
+  }
+
+  isRelatedInWishlist(productId: string): boolean {
+    return this.userService.isInWishlist(productId);
+  }
+
+  openImageModal() {
+    this.showImageModal.set(true);
+  }
+
+  closeImageModal() {
+    this.showImageModal.set(false);
+  }
+
+  nextImage() {
+    const prod = this.product();
+    if (!prod) return;
+
+    const currentIndex = this.selectedImageIndex();
+    const maxIndex = (prod.images?.length || 0);
+
+    if (currentIndex === -1) {
+      this.selectImage(0);
+    } else if (currentIndex < maxIndex - 1) {
+      this.selectImage(currentIndex + 1);
+    } else {
+      this.selectImage(-1);
+    }
+  }
+
+  prevImage() {
+    const prod = this.product();
+    if (!prod) return;
+
+    const currentIndex = this.selectedImageIndex();
+    const maxIndex = (prod.images?.length || 0);
+
+    if (currentIndex === -1) {
+      this.selectImage(maxIndex - 1);
+    } else if (currentIndex > 0) {
+      this.selectImage(currentIndex - 1);
+    } else {
+      this.selectImage(-1);
+    }
   }
 }

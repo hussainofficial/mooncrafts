@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -28,7 +29,7 @@ export interface ProductFlags {
   providedIn: 'root',
 })
 export class ProductFlagsService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/product-flags';
+  private readonly API_URL = `${environment.apiUrl}/product-flags`;
   productsWithFlags = signal<ProductWithFlags[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);

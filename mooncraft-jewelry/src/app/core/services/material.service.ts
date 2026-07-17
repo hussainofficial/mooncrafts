@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -18,7 +19,7 @@ export interface Material {
   providedIn: 'root',
 })
 export class MaterialService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/materials';
+  private readonly API_URL = `${environment.apiUrl}/materials`;
   materials = signal<Material[]>([]);
   activeMaterials = signal<Material[]>([]);
   loading = signal(false);

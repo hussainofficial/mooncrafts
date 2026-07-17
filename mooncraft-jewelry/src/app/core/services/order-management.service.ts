@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -18,7 +19,7 @@ export interface Order {
   providedIn: 'root'
 })
 export class OrderManagementService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/orders';
+  private readonly API_URL = `${environment.apiUrl}/orders`;
   orders = signal<Order[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);

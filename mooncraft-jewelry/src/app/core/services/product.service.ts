@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Product } from '../models';
 import { AuthService } from './auth.service';
 import { BlobImageService } from './blob-image.service';
@@ -9,7 +11,7 @@ import { BlobImageService } from './blob-image.service';
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/products';
+  private readonly API_URL = `${environment.apiUrl}/products`;
   products = signal<Product[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
@@ -136,21 +138,69 @@ export class ProductService {
     return this.products().find(p => p.id === id);
   }
 
-  async addProduct(product: Omit<Product, 'id'>): Promise<{ success: boolean; error?: string }> {
+  async getProductWithGallery(productId: string): Promise<Product | null> {
+    try {
+      // Get the product from local signal first
+      let product = this.getProductById(productId);
+
+      if (!product) {
+        console.warn('Product not found locally, returning null');
+        return null;
+      }
+
+      // Fetch gallery images for this product
+      try {
+        const galleryResponse = await firstValueFrom(
+          this.http.get<any>(`${this.API_URL}/${productId}/gallery`)
+        );
+
+        if (galleryResponse?.images && Array.isArray(galleryResponse.images)) {
+          // Extract image URLs from gallery response
+          const galleryImages = galleryResponse.images
+            .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
+            .map((img: any) => img.image_url);
+
+          console.log('✅ Loaded', galleryImages.length, 'gallery images for product', productId);
+
+          // Add gallery images to product
+          product = {
+            ...product,
+            images: galleryImages
+          };
+        }
+      } catch (error) {
+        console.warn('Gallery images not available:', error);
+        // Continue without gallery images, they're optional
+      }
+
+      return product;
+    } catch (error) {
+      console.error('Error fetching product with gallery:', error);
+      return null;
+    }
+  }
+
+  async addProduct(product: any): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
-      this.http.post<any>(`${this.API_URL}`, {
+      // Use the payload as-is (already formatted from frontend)
+      const payload = {
         name: product.name,
         description: product.description,
         price: product.price,
-        category_id: product.category,
-        material_id: product.material,
+        categoryId: product.categoryId,
+        materialId: product.materialId,
         image: product.image,
-        stock: product.inStock ? 50 : 0,
-        is_trending: product.isTrending || false,
-        is_new_arrival: product.isNewArrival || false,
-        is_best_seller: product.isBestSeller || false,
-        is_featured: product.isFeatured || false
-      }, { headers: this.getHeaders() }).subscribe({
+        stock: product.stock,
+        is_trending: product.is_trending !== undefined ? product.is_trending : (product.isTrending ? 1 : 0),
+        is_new_arrival: product.is_new_arrival !== undefined ? product.is_new_arrival : (product.isNewArrival ? 1 : 0),
+        is_best_seller: product.is_best_seller !== undefined ? product.is_best_seller : (product.isBestSeller ? 1 : 0),
+        is_featured: product.is_featured !== undefined ? product.is_featured : (product.isFeatured ? 1 : 0),
+        status: product.status || 'active'
+      };
+
+      console.log('📤 ProductService sending payload:', payload);
+
+      this.http.post<any>(`${this.API_URL}`, payload, { headers: this.getHeaders() }).subscribe({
         next: async () => {
           await this.fetchAllProducts();
           resolve({ success: true });
@@ -163,22 +213,27 @@ export class ProductService {
     });
   }
 
-  async updateProduct(id: string, updates: Partial<Product>): Promise<{ success: boolean; error?: string }> {
+  async updateProduct(id: string, updates: any): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
-      this.http.put<any>(`${this.API_URL}/${id}`, {
+      // Use the payload as-is (already formatted from frontend)
+      const payload = {
         name: updates.name,
         description: updates.description,
         price: updates.price,
-        category_id: updates.category,
-        material_id: updates.material,
+        categoryId: updates.categoryId,
+        materialId: updates.materialId,
         image: updates.image,
-        stock: updates.inStock ? 50 : 0,
-        status: 'active',
-        is_trending: updates.isTrending || false,
-        is_new_arrival: updates.isNewArrival || false,
-        is_best_seller: updates.isBestSeller || false,
-        is_featured: updates.isFeatured || false
-      }, { headers: this.getHeaders() }).subscribe({
+        stock: updates.stock,
+        status: updates.status || 'active',
+        is_trending: updates.is_trending !== undefined ? updates.is_trending : (updates.isTrending ? 1 : 0),
+        is_new_arrival: updates.is_new_arrival !== undefined ? updates.is_new_arrival : (updates.isNewArrival ? 1 : 0),
+        is_best_seller: updates.is_best_seller !== undefined ? updates.is_best_seller : (updates.isBestSeller ? 1 : 0),
+        is_featured: updates.is_featured !== undefined ? updates.is_featured : (updates.isFeatured ? 1 : 0)
+      };
+
+      console.log('📤 ProductService UPDATE payload:', payload);
+
+      this.http.put<any>(`${this.API_URL}/${id}`, payload, { headers: this.getHeaders() }).subscribe({
         next: async () => {
           console.log('✅ Product update successful, refreshing list...');
           await this.fetchAllProducts();

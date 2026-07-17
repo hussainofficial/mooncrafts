@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -17,7 +18,7 @@ export interface CategoryAdmin {
   providedIn: 'root',
 })
 export class CategoryAdminService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/categories';
+  private readonly API_URL = `${environment.apiUrl}/categories`;
   categories = signal<CategoryAdmin[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);

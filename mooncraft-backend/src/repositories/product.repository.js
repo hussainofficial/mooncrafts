@@ -309,6 +309,122 @@ class ProductRepository {
       connection.release();
     }
   }
+
+  async updateProductImages(productId, imageUrls) {
+    const connection = await getConnection();
+    try {
+      const imagesJson = JSON.stringify(imageUrls);
+      const query = `
+        UPDATE products
+        SET images = ?
+        WHERE id = ?
+      `;
+      await connection.execute(query, [imagesJson, productId]);
+    } finally {
+      connection.release();
+    }
+  }
+
+  // NEW: Product Images Table Methods
+
+  async addProductImage(productId, imageUrl, displayOrder = 1, altText = null) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        INSERT INTO product_images (product_id, image_url, display_order, alt_text)
+        VALUES (?, ?, ?, ?)
+      `;
+      const [result] = await connection.execute(query, [productId, imageUrl, displayOrder, altText]);
+      return result.insertId;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async addProductImages(productId, images) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        INSERT INTO product_images (product_id, image_url, display_order, alt_text)
+        VALUES (?, ?, ?, ?)
+      `;
+
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        await connection.execute(query, [
+          productId,
+          image.url || image.image_url,
+          image.display_order || (i + 1),
+          image.alt_text || null
+        ]);
+      }
+
+      return true;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async getProductImages(productId) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        SELECT id, product_id, image_url, display_order, alt_text, created_at
+        FROM product_images
+        WHERE product_id = ?
+        ORDER BY display_order ASC
+      `;
+      const [rows] = await connection.execute(query, [productId]);
+      return rows;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async deleteProductImage(imageId) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        DELETE FROM product_images
+        WHERE id = ?
+      `;
+      const [result] = await connection.execute(query, [imageId]);
+      return result.affectedRows > 0;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async updateImageOrder(productId, images) {
+    const connection = await getConnection();
+    try {
+      for (const image of images) {
+        const query = `
+          UPDATE product_images
+          SET display_order = ?, alt_text = ?
+          WHERE id = ? AND product_id = ?
+        `;
+        await connection.execute(query, [image.display_order, image.alt_text || null, image.id, productId]);
+      }
+      return true;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async deleteProductImages(productId) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        DELETE FROM product_images
+        WHERE product_id = ?
+      `;
+      await connection.execute(query, [productId]);
+      return true;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 module.exports = new ProductRepository();

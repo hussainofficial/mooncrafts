@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -18,7 +19,7 @@ export interface Collection {
   providedIn: 'root',
 })
 export class CollectionService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/collections';
+  private readonly API_URL = `${environment.apiUrl}/collections`;
   collections = signal<Collection[]>([]);
   activeCollections = signal<Collection[]>([]);
   loading = signal(false);

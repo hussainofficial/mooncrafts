@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -17,7 +18,7 @@ export interface User {
   providedIn: 'root',
 })
 export class UserManagementService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/users';
+  private readonly API_URL = `${environment.apiUrl}/users`;
   users = signal<User[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);

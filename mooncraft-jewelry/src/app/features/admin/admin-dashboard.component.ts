@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -329,8 +330,8 @@ import { Product } from '../../core/models';
                   name="category"
                   required
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
-                  <option value="" disabled selected>Select a category</option>
-                  <option *ngFor="let cat of categoryService.getCategories()" [value]="cat.id">
+                  <option value="">Select a category</option>
+                  <option *ngFor="let cat of categoryAdminService.getCategories()" [value]="toString(cat.id)">
                     {{ cat.name }}
                   </option>
                 </select>
@@ -342,8 +343,8 @@ import { Product } from '../../core/models';
                   name="material"
                   required
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
-                  <option value="" disabled selected>Select a material</option>
-                  <option *ngFor="let mat of categoryService.getMaterials()" [value]="mat.id">
+                  <option value="">Select a material</option>
+                  <option *ngFor="let mat of categoryService.getMaterials()" [value]="toString(mat.id)">
                     {{ mat.name }}
                   </option>
                 </select>
@@ -385,20 +386,20 @@ import { Product } from '../../core/models';
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
               </div>
               <div>
-                <label class="block text-sm font-semibold text-gray-900 mb-2">Stock</label>
-                <select
-                  [(ngModel)]="productForm.inStock"
-                  name="inStock"
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Stock Quantity</label>
+                <input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="productForm.stock"
+                  name="stock"
+                  placeholder="Enter quantity in stock"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
-                  <option [value]="true">In Stock</option>
-                  <option [value]="false">Out of Stock</option>
-                </select>
               </div>
             </div>
 
-            <!-- Image Upload -->
+            <!-- Image Upload - Primary Image -->
             <div>
-              <label class="block text-sm font-semibold text-gray-900 mb-2">Product Image *</label>
+              <label class="block text-sm font-semibold text-gray-900 mb-2">Product Image (Primary) *</label>
               <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-rose-500 transition-colors"
                 (click)="fileInput.click()">
                 <input
@@ -412,6 +413,96 @@ import { Product } from '../../core/models';
                   <p class="text-sm text-gray-500">PNG, JPG, GIF up to 10MB</p>
                 </div>
                 <img *ngIf="productForm.image" [src]="productForm.image" alt="Preview" class="max-h-40 mx-auto rounded">
+              </div>
+            </div>
+
+            <!-- Image Upload - Gallery Images -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-900 mb-2">
+                Gallery Images (Optional)
+                <span class="text-gray-500 text-xs ml-2">{{ galleryImages.length }}/10</span>
+              </label>
+
+              <!-- Upload Area -->
+              <div class="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors bg-blue-50"
+                (click)="galleryFileInput.click()"
+                (dragover)="$event.preventDefault(); $event.stopPropagation()"
+                (dragleave)="$event.preventDefault(); $event.stopPropagation()"
+                (drop)="onGalleryImagesDropped($event)">
+                <input
+                  #galleryFileInput
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  (change)="onGalleryImagesSelected($event)"
+                  class="hidden">
+                <div class="space-y-2">
+                  <p class="text-blue-600 font-semibold">📸 Click or drag to add gallery images</p>
+                  <p class="text-sm text-gray-600">Max 10 images per product (PNG, JPG, GIF)</p>
+                  <p class="text-xs text-gray-500 mt-2">{{ galleryImages.length }} image(s) added</p>
+                </div>
+              </div>
+
+              <!-- Gallery Preview with Reordering -->
+              <div *ngIf="galleryImages.length > 0" class="mt-6">
+                <div class="flex justify-between items-center mb-4">
+                  <p class="text-sm font-semibold text-gray-900">Gallery Preview (drag to reorder):</p>
+                  <button
+                    type="button"
+                    (click)="clearGalleryImages()"
+                    class="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200">
+                    Clear All
+                  </button>
+                </div>
+
+                <!-- Images Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <div *ngFor="let img of galleryImages; let i = index"
+                    class="relative group cursor-move border-2 border-blue-300 rounded overflow-hidden hover:border-blue-500 transition"
+                    draggable="true"
+                    (dragstart)="onDragStart($event, i)"
+                    (dragover)="onDragOver($event)"
+                    (drop)="onDrop($event, i)"
+                    (dragend)="onDragEnd($event)">
+
+                    <!-- Image -->
+                    <img [src]="img.url" [alt]="'Gallery ' + (i+1)" class="w-full h-24 object-cover">
+
+                    <!-- Order Number Badge -->
+                    <span class="absolute top-1 left-1 bg-blue-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+                      {{ i + 1 }}
+                    </span>
+
+                    <!-- Delete Button -->
+                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded flex items-center justify-center transition">
+                      <button
+                        type="button"
+                        (click)="removeGalleryImage(i)"
+                        class="hidden group-hover:block bg-red-500 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-red-600">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alt Text Edit Section (Optional) -->
+                <div *ngIf="galleryImages.length > 0" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p class="text-sm font-semibold text-gray-900 mb-3">Edit image details (optional):</p>
+                  <div class="space-y-2 max-h-40 overflow-y-auto">
+                    <div *ngFor="let img of galleryImages; let i = index" class="flex gap-2 items-start">
+                      <img [src]="img.url" [alt]="'Gallery ' + (i+1)" class="w-12 h-12 object-cover rounded">
+                      <div class="flex-1">
+                        <label class="block text-xs text-gray-600 mb-1">Image {{ i + 1 }} - Alt text (for SEO)</label>
+                        <input
+                          type="text"
+                          [(ngModel)]="img.alt_text"
+                          [name]="'alt_' + i"
+                          placeholder="e.g., Ring front view"
+                          class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1159,6 +1250,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   itemsPerPage = signal(5);
   refreshTrigger = signal(0);
 
+  // Gallery Images
+  galleryImages: any[] = [];
+  draggedIndex: number | null = null;
+
   productForm = {
     name: '',
     description: '',
@@ -1170,6 +1265,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     category: '',
     material: '',
     collection: '',
+    stock: 50,
     inStock: true,
     discount: 0,
     isTrending: false,
@@ -1323,26 +1419,67 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.resetProductForm();
   }
 
-  editProduct(product: Product) {
-    this.editingProduct.set(product);
-    this.showEditForm.set(true);
-    Object.assign(this.productForm, product);
+  async editProduct(product: Product) {
+    this.loaderService.show('Loading product details...', true);
 
-    // ✅ Set form to use category_id and material_id from API response
-    this.productForm.category = (product as any).categoryId || product.category;
+    try {
+      // CRITICAL: Ensure materials & categories are loaded first
+      if (this.categoryService.getMaterials().length === 0) {
+        console.log('⏳ Materials not loaded, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 300)); // Wait for materials to load
+      }
 
-    // Convert material name to material ID by looking up in materials list
-    const materialId = (product as any).materialId;
-    if (materialId) {
-      this.productForm.material = String(materialId);
-    } else {
-      // Fallback: find material by name if ID not available
-      const material = this.categoryService.getMaterials().find(m => m.name === product.material);
-      this.productForm.material = material?.id ? String(material.id) : product.material;
+      this.editingProduct.set(product);
+      Object.assign(this.productForm, product);
+
+      // Set category ID (ensure it's an integer, not string)
+      const categoryId = (product as any).categoryId || (product as any).category_id;
+      (this.productForm as any).category = categoryId || null;
+
+      // Set material ID (ensure it's an integer, not string)
+      const materialId = (product as any).materialId || (product as any).material_id;
+      (this.productForm as any).material = materialId || null;
+
+      console.log('🎯 Material Debug:', {
+        productMaterialId: materialId,
+        formMaterialValue: (this.productForm as any).material,
+        availableMaterials: this.categoryService.getMaterials().map((m: any) => ({ id: m.id, name: m.name }))
+      });
+
+      // Load existing gallery images from API
+      console.log('📸 Loading gallery images for product:', product.id);
+      const galleryResponse = await fetch(`${environment.apiUrl}/products/${product.id}/gallery`);
+
+      if (galleryResponse.ok) {
+        const data = await galleryResponse.json();
+        console.log('📊 Gallery API Response:', data);
+
+        if (data.images && Array.isArray(data.images)) {
+          // Mark images as "existing" so they won't be re-uploaded
+          this.galleryImages = data.images.map((img: any, index: number) => ({
+            url: img.image_url,
+            alt_text: img.alt_text || `Product image ${index + 1}`,
+            display_order: img.display_order || (index + 1),
+            isExisting: true  // Mark as existing, not new
+          }));
+          console.log('✅ Loaded', this.galleryImages.length, 'existing gallery images');
+        } else {
+          console.log('⚠️  No images in response');
+          this.galleryImages = [];
+        }
+      } else {
+        console.log('⚠️  Gallery API returned:', galleryResponse.status);
+        this.galleryImages = [];
+      }
+    } catch (error) {
+      console.error('❌ Error loading gallery images:', error);
+      this.galleryImages = [];
+    } finally {
+      this.loaderService.hide();
+      this.showEditForm.set(true);
+      this.activeTab.set('add');
+      this.cdr.markForCheck();
     }
-
-    console.log('📝 Edit mode - Material set to:', this.productForm.material);
-    this.activeTab.set('add');
   }
 
   async deleteProduct(id: string) {
@@ -1387,9 +1524,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+
   async saveProduct() {
-    if (!this.productForm.name || !this.productForm.description || !this.productForm.image || !this.productForm.category || !this.productForm.material) {
-      this.showError('Please fill in all required fields');
+    if (!this.productForm.name || !this.productForm.description || !this.productForm.image || !this.productForm.category || !this.productForm.material || !this.productForm.price || this.productForm.stock === null || this.productForm.stock === undefined) {
+      this.showError('❌ Please fill in ALL required fields:\n✓ Product Name\n✓ Description\n✓ Price\n✓ Category\n✓ Material\n✓ Stock Quantity\n✓ Product Image');
       return;
     }
 
@@ -1397,10 +1535,42 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       const isUpdate = !!this.editingProduct();
       this.loaderService.show(isUpdate ? 'Updating product...' : 'Creating product...', true);
 
+      let productId: string | null = null;
+
       if (isUpdate) {
-        const result = await this.productService.updateProduct(this.editingProduct()!.id, this.productForm as any);
+        // Build proper payload for update (map form fields to API format)
+        const updatePayload = {
+          name: this.productForm.name,
+          description: this.productForm.description,
+          price: parseFloat(String(this.productForm.price)),
+          categoryId: parseInt(String(this.productForm.category)) || null,
+          materialId: (this.productForm as any).material ? parseInt(String((this.productForm as any).material)) : null,
+          image: this.productForm.image,
+          stock: parseInt(String(this.productForm.stock)),
+          is_trending: this.productForm.isTrending ? 1 : 0,
+          is_new_arrival: this.productForm.isNewArrival ? 1 : 0,
+          is_best_seller: this.productForm.isBestSeller ? 1 : 0,
+          is_featured: this.productForm.isFeatured ? 1 : 0,
+          status: 'active'
+        };
+
+        const result = await this.productService.updateProduct(this.editingProduct()!.id, updatePayload as any);
         if (result.success) {
+          productId = this.editingProduct()!.id;
           this.showSuccess('✅ Product updated successfully');
+
+          // Save/update gallery images if any
+          if (this.galleryImages.length > 0 && productId) {
+            this.loaderService.show('Uploading gallery images...', true);
+            const gallerySuccess = await this.saveGalleryImages(productId);
+
+            if (gallerySuccess) {
+              this.showSuccess('✅ Product updated with gallery images!');
+            } else {
+              this.showSuccess('✅ Product updated. Gallery image upload had issues.');
+            }
+          }
+
           this.loaderService.complete();
           await this.loadProducts();
         } else {
@@ -1409,11 +1579,45 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           return;
         }
       } else {
-        const result = await this.productService.addProduct(this.productForm as any);
+        // Simple: Create product with primary image only
+        const apiPayload = {
+          name: this.productForm.name,
+          description: this.productForm.description,
+          price: parseFloat(String(this.productForm.price)),
+          categoryId: parseInt(String(this.productForm.category)),
+          materialId: parseInt(String(this.productForm.material)),
+          image: this.productForm.image,
+          stock: parseInt(String(this.productForm.stock)),
+          is_trending: this.productForm.isTrending ? 1 : 0,
+          is_new_arrival: this.productForm.isNewArrival ? 1 : 0,
+          is_best_seller: this.productForm.isBestSeller ? 1 : 0,
+          is_featured: this.productForm.isFeatured ? 1 : 0,
+          status: 'active'
+        };
+
+        const result = await this.productService.addProduct(apiPayload as any);
         if (result.success) {
-          this.showSuccess('✅ Product added successfully');
-          this.loaderService.complete();
           await this.loadProducts();
+
+          // Get the newly created product ID (last product in list)
+          const products = this.productService.getProducts();
+          const productId = products.length > 0 ? products[products.length - 1].id : null;
+
+          // Save gallery images if any
+          if (this.galleryImages.length > 0 && productId) {
+            this.loaderService.show('Uploading gallery images...', true);
+            const gallerySuccess = await this.saveGalleryImages(productId);
+
+            if (gallerySuccess) {
+              this.showSuccess('✅ Product created with gallery images!');
+            } else {
+              this.showSuccess('✅ Product created. Gallery image upload had issues.');
+            }
+          } else {
+            this.showSuccess('✅ Product created successfully!');
+          }
+
+          this.loaderService.complete();
         } else {
           this.loaderService.hide();
           this.showError(`❌ Failed to add product: ${result.error}`);
@@ -1431,9 +1635,202 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  // Gallery Images Methods
+
+  onGalleryImagesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+
+    if (!files || files.length === 0) return;
+
+    const maxImages = 10;
+    const availableSlots = maxImages - this.galleryImages.length;
+    const filesToAdd = Math.min(files.length, availableSlots);
+
+    if (availableSlots <= 0) {
+      this.showError('Maximum 10 gallery images allowed');
+      return;
+    }
+
+    for (let i = 0; i < filesToAdd; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        this.galleryImages.push({
+          url: e.target?.result as string,
+          alt_text: '',
+          display_order: this.galleryImages.length + 1,
+          isExisting: false  // Mark as new, not existing
+        });
+        this.cdr.markForCheck();
+      };
+
+      reader.onerror = () => {
+        this.showError(`Failed to read image: ${file.name}`);
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    if (filesToAdd < files.length) {
+      this.showError(`Only ${filesToAdd} images added. Maximum 10 images allowed.`);
+    }
+
+    this.showSuccess(`✅ ${filesToAdd} image(s) added to gallery`);
+  }
+
+  onGalleryImagesDropped(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const files = event.dataTransfer?.files;
+    if (!files) return;
+
+    // Simulate file input change
+    const input = document.querySelector('#galleryFileInput') as HTMLInputElement;
+    if (input) {
+      const dataTransfer = new DataTransfer();
+      for (let i = 0; i < files.length; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+      input.files = dataTransfer.files;
+      this.onGalleryImagesSelected({ target: input } as any);
+    }
+  }
+
+  removeGalleryImage(index: number) {
+    this.galleryImages.splice(index, 1);
+    // Update display order
+    this.galleryImages.forEach((img, i) => {
+      img.display_order = i + 1;
+    });
+    this.cdr.markForCheck();
+  }
+
+  clearGalleryImages() {
+    if (confirm('Are you sure you want to clear all gallery images?')) {
+      this.galleryImages = [];
+      this.cdr.markForCheck();
+    }
+  }
+
+  // Drag and Drop Reordering
+  onDragStart(event: DragEvent, index: number) {
+    this.draggedIndex = index;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+  }
+
+  onDrop(event: DragEvent, dropIndex: number) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.draggedIndex === null || this.draggedIndex === dropIndex) {
+      return;
+    }
+
+    // Reorder array
+    const draggedImage = this.galleryImages[this.draggedIndex];
+    this.galleryImages.splice(this.draggedIndex, 1);
+    this.galleryImages.splice(dropIndex, 0, draggedImage);
+
+    // Update display order
+    this.galleryImages.forEach((img, i) => {
+      img.display_order = i + 1;
+    });
+
+    this.draggedIndex = null;
+    this.cdr.markForCheck();
+  }
+
+  onDragEnd(event: DragEvent) {
+    this.draggedIndex = null;
+  }
+
+  // Save gallery images to backend
+  async saveGalleryImages(productId: string): Promise<boolean> {
+    if (this.galleryImages.length === 0) {
+      return true; // No images to save
+    }
+
+    try {
+      const token = this.authService.getAccessToken();
+      console.log('🔑 Token exists:', !!token);
+
+      if (!token) {
+        this.showError('No authentication token. Please login again.');
+        return false;
+      }
+
+      // Only save NEW images (mark isExisting=true to skip already-saved ones)
+      const newImages = this.galleryImages.filter(img => !(img as any).isExisting);
+
+      console.log('📤 Gallery images - Total:', this.galleryImages.length, 'New to upload:', newImages.length);
+
+      // If no new images to save, return success (nothing to do)
+      if (newImages.length === 0) {
+        console.log('✅ No new images to upload (all are existing)');
+        return true;
+      }
+
+      const payload = {
+        images: newImages.map((img, index) => ({
+          url: img.url,
+          alt_text: img.alt_text || `Product image ${index + 1}`,
+          display_order: index + 1
+        }))
+      };
+
+      console.log('📤 Gallery payload:', { imageCount: payload.images.length });
+
+      const response = await fetch(`${environment.apiUrl}/products/${productId}/gallery`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      console.log('📡 Gallery response status:', response.status);
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('✅ Gallery images saved:', result.count, 'new images');
+        this.galleryImages = []; // Clear the gallery
+        return true;
+      } else {
+        console.error('Gallery upload error:', result.message);
+        this.showError('Failed to save gallery images: ' + result.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error saving gallery images:', error);
+      this.showError('Error saving gallery images');
+      return false;
+    }
+  }
+
+  // Helper method for template to convert values to string
+  toString(value: any): string {
+    return String(value);
+  }
+
   resetProductForm() {
     this.editingProduct.set(null);
     this.showEditForm.set(false);
+    this.galleryImages = []; // Clear gallery images
     this.productForm = {
       name: '',
       description: '',
@@ -1445,6 +1842,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       category: '',
       material: '',
       collection: '',
+      stock: 50,
       inStock: true,
       discount: 0,
       isTrending: false,

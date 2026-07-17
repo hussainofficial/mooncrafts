@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -18,7 +19,7 @@ export interface Payment {
   providedIn: 'root'
 })
 export class PaymentManagementService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/payments';
+  private readonly API_URL = `${environment.apiUrl}/payments`;
   payments = signal<Payment[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);

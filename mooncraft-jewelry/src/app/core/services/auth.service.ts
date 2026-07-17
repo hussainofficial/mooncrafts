@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface User {
   id: string;
@@ -31,7 +32,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'mooncraft_access_token';
   private readonly REFRESH_TOKEN_KEY = 'mooncraft_refresh_token';
   private readonly EXPIRY_TIME_KEY = 'mooncraft_token_expiry';
-  private readonly API_URL = 'http://localhost:5000/api/v1/auth';
+  private readonly API_URL = `${environment.apiUrl}/auth`;
 
   currentUser = signal<User | null>(null);
   isLoggedIn = signal(false);

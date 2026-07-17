@@ -19,11 +19,11 @@ import { HeaderComponent } from '../home/components/header.component';
     <div class="min-h-screen bg-gray-50">
       <!-- Back Button -->
       <div class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 py-3">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3">
           <button
             (click)="goBackToCart()"
-            class="flex items-center gap-2 text-rose-500 hover:text-rose-600 font-semibold transition-colors">
-            <span class="text-2xl">←</span>
+            class="flex items-center gap-2 text-rose-500 hover:text-rose-600 font-semibold transition-colors text-sm sm:text-base">
+            <span class="text-xl sm:text-2xl">←</span>
             Back to Cart
           </button>
         </div>
@@ -31,89 +31,89 @@ import { HeaderComponent } from '../home/components/header.component';
 
       <!-- Progress Bar -->
       <div class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <div class="flex items-center justify-center w-8 h-8 rounded-full bg-rose-500 text-white font-bold">1</div>
-              <span class="ml-2 text-sm font-semibold text-gray-900">Shipping</span>
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div class="flex items-center justify-between gap-2 sm:gap-4">
+            <div class="flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none">
+              <div class="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-rose-500 text-white font-bold text-xs sm:text-sm">1</div>
+              <span class="text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap">Shipping</span>
             </div>
-            <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
-            <div class="flex items-center">
-              <div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 font-bold">2</div>
-              <span class="ml-2 text-sm font-semibold text-gray-600">Payment</span>
+            <div class="flex-1 h-0.5 sm:h-1 bg-gray-300 mx-2 sm:mx-4"></div>
+            <div class="flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none">
+              <div class="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-300 text-gray-600 font-bold text-xs sm:text-sm">2</div>
+              <span class="text-xs sm:text-sm font-semibold text-gray-600 whitespace-nowrap">Payment</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-3 gap-8">
+      <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           <!-- Left Column - Checkout Form -->
-          <div class="col-span-2 space-y-6">
+          <div class="col-span-1 lg:col-span-2 space-y-4 sm:space-y-6">
             <!-- Shipping Address Section -->
-            <div class="bg-white rounded-lg shadow p-6">
-              <h2 class="text-xl font-bold text-gray-900 mb-6">Shipping Address</h2>
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Shipping Address</h2>
 
-              <form class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
+              <form class="space-y-3 sm:space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Full Name *</label>
                     <input
                       type="text"
                       [(ngModel)]="checkoutService.shippingAddress().fullName"
                       (ngModelChange)="updateAddress('fullName', $event)"
                       name="fullName"
                       [class.border-red-500]="getFieldError('fullName')"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
+                      class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
                     <p *ngIf="getFieldError('fullName')" class="text-xs text-red-600 mt-1">{{ getFieldError('fullName') }}</p>
                   </div>
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Email *</label>
                     <input
                       type="email"
                       [(ngModel)]="checkoutService.shippingAddress().email"
                       (ngModelChange)="updateAddress('email', $event)"
                       name="email"
                       [class.border-red-500]="getFieldError('email')"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
+                      class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
                     <p *ngIf="getFieldError('email')" class="text-xs text-red-600 mt-1">{{ getFieldError('email') }}</p>
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+                  <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Phone Number *</label>
                   <input
                     type="tel"
                     [(ngModel)]="checkoutService.shippingAddress().phone"
                     (ngModelChange)="updateAddress('phone', $event)"
                     name="phone"
                     [class.border-red-500]="getFieldError('phone')"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
+                    class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
                   <p *ngIf="getFieldError('phone')" class="text-xs text-red-600 mt-1">{{ getFieldError('phone') }}</p>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Address *</label>
+                  <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Address *</label>
                   <textarea
                     [(ngModel)]="checkoutService.shippingAddress().address"
                     (ngModelChange)="updateAddress('address', $event)"
                     name="address"
                     rows="2"
-                    [class.border-red-500]="getFieldError('address')"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500"></textarea>
+                    class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500"
+                    [class.border-red-500]="getFieldError('address')"></textarea>
                   <p *ngIf="getFieldError('address')" class="text-xs text-red-600 mt-1">{{ getFieldError('address') }}</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <!-- State Dropdown -->
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">State *</label>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">State *</label>
                     <select
                       [ngModel]="selectedStateId()"
                       (ngModelChange)="onStateChange($event)"
                       name="state"
                       [class.border-red-500]="getFieldError('state')"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500 bg-white">
+                      class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500 bg-white">
                       <option [value]="null">Select State</option>
                       <option *ngFor="let state of locationService.states()" [value]="state.id">
                         {{ state.name }}
@@ -125,14 +125,14 @@ import { HeaderComponent } from '../home/components/header.component';
 
                   <!-- City Dropdown -->
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">City *</label>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">City *</label>
                     <select
                       [ngModel]="selectedCityId()"
                       (ngModelChange)="onCityChange($event)"
                       name="city"
                       [disabled]="!selectedStateId() || isLoadingCities()"
                       [class.border-red-500]="getFieldError('city')"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500 bg-white disabled:bg-gray-100">
+                      class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500 bg-white disabled:bg-gray-100">
                       <option [value]="null">{{ selectedStateId() ? 'Select City' : 'Select State First' }}</option>
                       <option *ngFor="let city of filteredCities()" [value]="city.id">
                         {{ city.name }}
@@ -143,25 +143,25 @@ import { HeaderComponent } from '../home/components/header.component';
                   </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Postal Code *</label>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Postal Code *</label>
                     <input
                       type="text"
                       [(ngModel)]="checkoutService.shippingAddress().postalCode"
                       (ngModelChange)="updateAddress('postalCode', $event)"
                       name="postalCode"
                       [class.border-red-500]="getFieldError('postalCode')"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
+                      class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
                     <p *ngIf="getFieldError('postalCode')" class="text-xs text-red-600 mt-1">{{ getFieldError('postalCode') }}</p>
                   </div>
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Country *</label>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Country *</label>
                     <select
                       [(ngModel)]="checkoutService.shippingAddress().country"
                       (ngModelChange)="updateAddress('country', $event)"
                       name="country"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
+                      class="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
                       <option>India</option>
                       <option>USA</option>
                       <option>UK</option>
@@ -172,30 +172,30 @@ import { HeaderComponent } from '../home/components/header.component';
             </div>
 
             <!-- Delivery Method Section -->
-            <div class="bg-white rounded-lg shadow p-6">
-              <h2 class="text-xl font-bold text-gray-900 mb-6">Select Delivery Method</h2>
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Select Delivery Method</h2>
 
-              <div class="space-y-3">
+              <div class="space-y-2 sm:space-y-3">
                 <div *ngFor="let method of checkoutService.deliveryMethods"
                   (click)="checkoutService.selectDeliveryMethod(method)"
                   [class.border-rose-500]="checkoutService.selectedDeliveryMethod()?.id === method.id"
                   [class.bg-rose-50]="checkoutService.selectedDeliveryMethod()?.id === method.id"
-                  class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all hover:border-rose-300">
-                  <div class="flex items-start gap-4">
-                    <div class="mt-1">
+                  class="border-2 border-gray-200 rounded-lg p-3 sm:p-4 cursor-pointer transition-all hover:border-rose-300">
+                  <div class="flex items-start gap-2 sm:gap-4">
+                    <div class="mt-0.5 sm:mt-1 flex-shrink-0">
                       <input
                         type="radio"
                         [checked]="checkoutService.selectedDeliveryMethod()?.id === method.id"
                         class="w-4 h-4 accent-rose-500 cursor-pointer">
                     </div>
-                    <div class="flex-1">
-                      <h3 class="font-semibold text-gray-900">{{ method.name }}</h3>
-                      <p class="text-sm text-gray-600 mt-1">{{ method.description }}</p>
-                      <p class="text-xs text-gray-500 mt-2">Estimated delivery in {{ method.estimatedDays }} days</p>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-semibold text-sm sm:text-base text-gray-900">{{ method.name }}</h3>
+                      <p class="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">{{ method.description }}</p>
+                      <p class="text-xs text-gray-500 mt-1">Estimated delivery in {{ method.estimatedDays }} days</p>
                     </div>
-                    <div class="text-right">
-                      <p *ngIf="method.price > 0" class="font-bold text-gray-900">₹{{ method.price }}</p>
-                      <p *ngIf="method.price === 0" class="font-bold text-green-600">FREE</p>
+                    <div class="text-right flex-shrink-0 ml-2">
+                      <p *ngIf="method.price > 0" class="font-bold text-xs sm:text-sm text-gray-900">₹{{ method.price }}</p>
+                      <p *ngIf="method.price === 0" class="font-bold text-xs sm:text-sm text-green-600">FREE</p>
                     </div>
                   </div>
                 </div>
@@ -203,24 +203,24 @@ import { HeaderComponent } from '../home/components/header.component';
             </div>
 
             <!-- Coupon Section -->
-            <div class="bg-white rounded-lg shadow p-6">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">Promo Code</h2>
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Promo Code</h2>
 
-              <div class="flex gap-2">
+              <div class="flex gap-2 flex-col sm:flex-row">
                 <input
                   type="text"
                   [(ngModel)]="couponInput"
-                  placeholder="Enter promo code (e.g., MOONCRAFT10, NEWUSER15)"
-                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
+                  placeholder="Enter promo code (e.g., MOONCRAFT10)"
+                  class="flex-1 px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-rose-500">
                 <button
                   (click)="applyCoupon()"
-                  class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
+                  class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors text-sm">
                   Apply
                 </button>
               </div>
 
-              <div *ngIf="checkoutService.couponCode()" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p class="text-sm text-green-700">
+              <div *ngIf="checkoutService.couponCode()" class="mt-3 sm:mt-4 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p class="text-xs sm:text-sm text-green-700">
                   ✓ Coupon {{ checkoutService.couponCode() }} applied! You save ₹{{ getSavings() }}
                 </p>
                 <button
@@ -235,42 +235,42 @@ import { HeaderComponent } from '../home/components/header.component';
             <button
               (click)="proceedToPayment()"
               [disabled]="!isCheckoutValid()"
-              class="w-full px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-lg font-bold hover:from-rose-600 hover:to-pink-600 disabled:from-gray-400 disabled:to-gray-400 transition-all text-lg">
+              class="w-full px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-lg font-bold hover:from-rose-600 hover:to-pink-600 disabled:from-gray-400 disabled:to-gray-400 transition-all text-sm sm:text-lg">
               Continue to Payment
             </button>
           </div>
 
           <!-- Right Column - Order Summary -->
-          <div class="bg-white rounded-lg shadow p-6 h-fit sticky top-20">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+          <div class="bg-white rounded-lg shadow p-4 sm:p-6 lg:h-fit lg:sticky lg:top-20">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Order Summary</h2>
 
-            <div class="space-y-3 mb-6 pb-6 border-b">
-              <div class="flex justify-between">
+            <div class="space-y-2 sm:space-y-3 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b">
+              <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Subtotal</span>
                 <span class="font-semibold">₹{{ getBreakdown().cartTotal }}</span>
               </div>
-              <div class="flex justify-between">
+              <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Tax (18%)</span>
                 <span class="font-semibold">₹{{ getBreakdown().tax }}</span>
               </div>
-              <div class="flex justify-between">
+              <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Delivery</span>
                 <span class="font-semibold">₹{{ getBreakdown().deliveryCharge }}</span>
               </div>
-              <div *ngIf="getBreakdown().discountAmount > 0" class="flex justify-between text-green-600">
+              <div *ngIf="getBreakdown().discountAmount > 0" class="flex justify-between text-sm text-green-600">
                 <span>Discount</span>
                 <span class="font-semibold">-₹{{ getBreakdown().discountAmount }}</span>
               </div>
             </div>
 
-            <div class="flex justify-between items-center mb-6">
-              <span class="text-gray-600 font-semibold">Total</span>
-              <span class="text-2xl font-bold text-rose-600">₹{{ getBreakdown().finalTotal }}</span>
+            <div class="flex justify-between items-center mb-4 sm:mb-6">
+              <span class="text-gray-600 font-semibold text-sm">Total</span>
+              <span class="text-lg sm:text-2xl font-bold text-rose-600">₹{{ getBreakdown().finalTotal }}</span>
             </div>
 
             <!-- Items Count -->
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p class="text-sm text-blue-700">
+              <p class="text-xs sm:text-sm text-blue-700">
                 <span class="font-bold">{{ cartService.cartItems().length }}</span> items in your cart
               </p>
             </div>

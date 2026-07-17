@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 
 export interface Category {
@@ -15,8 +16,8 @@ export interface Category {
   providedIn: 'root',
 })
 export class CategoryService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/categories';
-  private readonly MATERIALS_API_URL = 'http://localhost:5000/api/v1/materials';
+  private readonly API_URL = `${environment.apiUrl}/categories`;
+  private readonly MATERIALS_API_URL = `${environment.apiUrl}/materials`;
   categories = signal<Category[]>([]);
   materials = signal<Category[]>([]);
   loading = signal(false);

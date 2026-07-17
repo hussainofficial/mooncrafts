@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth.service';
@@ -39,7 +40,7 @@ export interface OrderResponse {
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/orders';
+  private readonly API_URL = `${environment.apiUrl}/orders`;
 
   constructor(
     private http: HttpClient,

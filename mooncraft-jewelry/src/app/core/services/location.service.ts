@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -25,7 +26,7 @@ export interface SearchResult {
   providedIn: 'root',
 })
 export class LocationService {
-  private apiUrl = 'http://localhost:5000/api/v1/locations';
+  private apiUrl = '${environment.apiUrl/locations';
 
   states = signal<State[]>([]);
   cities = signal<City[]>([]);

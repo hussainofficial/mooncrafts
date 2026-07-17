@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -33,7 +34,7 @@ export interface PaymentVerificationResponse {
   providedIn: 'root'
 })
 export class RazorpayIntegrationService {
-  private readonly API_URL = 'http://localhost:5000/api/v1/razorpay';
+  private readonly API_URL = `${environment.apiUrl}/razorpay`;
   paymentInProgress = signal(false);
   paymentError = signal<string | null>(null);
 

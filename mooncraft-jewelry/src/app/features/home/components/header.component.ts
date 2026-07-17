@@ -25,21 +25,21 @@ interface NavItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="bg-white shadow-sm sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="flex items-center justify-between h-16">
+      <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6">
+        <div class="flex items-center justify-between h-14 sm:h-16">
           <!-- Logo -->
-          <div class="flex items-center">
-            <a href="/" class="text-2xl font-bold text-rose-500">MOONCRAFT</a>
-          </div>
+          <a href="/" class="flex-shrink-0">
+            <span class="text-xl sm:text-2xl font-bold text-rose-500 whitespace-nowrap">MOONCRAFT</span>
+          </a>
 
           <!-- Desktop Navigation -->
-          <nav class="hidden md:flex items-center gap-8 overflow-visible">
+          <nav class="hidden lg:flex items-center gap-6 xl:gap-8 ml-8 flex-1">
             <a
               *ngFor="let item of navItems"
               [routerLink]="item.isRouterLink ? item.href : '/'"
               [fragment]="item.isRouterLink ? undefined : item.href.substring(1)"
               (click)="item.isRouterLink ? null : closeMenu()"
-              class="text-gray-700 hover:text-rose-500 font-medium transition-colors relative group">
+              class="text-sm text-gray-700 hover:text-rose-500 font-medium transition-colors relative group whitespace-nowrap">
               {{ item.label }}
 
               <!-- Mega Menu for Products -->
@@ -119,11 +119,11 @@ interface NavItem {
             </a>
           </nav>
 
-          <!-- Right Icons -->
-          <div class="flex items-center gap-4">
+          <!-- Right Section: Icons + Auth Buttons -->
+          <div class="flex items-center gap-1 sm:gap-2 md:gap-3">
             <!-- Search -->
             <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </button>
@@ -132,35 +132,48 @@ interface NavItem {
             <button
               (click)="goToWishlist()"
               class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-              <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
               </svg>
-              <span class="absolute top-1 right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{{ userService.wishlistCount() }}</span>
+              <span class="absolute top-0 right-0 bg-rose-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-xs leading-none">{{ userService.wishlistCount() }}</span>
             </button>
 
             <!-- Cart -->
             <button
               (click)="goToCart()"
               class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-              <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
               </svg>
-              <span class="absolute top-1 right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{{ cartService.cartCount() }}</span>
+              <span class="absolute top-0 right-0 bg-rose-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-xs leading-none">{{ cartService.cartCount() }}</span>
             </button>
 
-            <!-- Profile Icon (Logged in users only) -->
-            <div class="relative" *ngIf="authService.isLoggedIn() || userService.currentUserProfile()">
+            <!-- Auth Buttons (Mobile: hidden, Desktop: visible) -->
+            <div *ngIf="!(authService.isLoggedIn() || userService.currentUserProfile())" class="hidden sm:flex items-center gap-1 md:gap-2">
+              <a
+                routerLink="/signin"
+                class="auth-btn-signin text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2">
+                Sign In
+              </a>
+              <a
+                routerLink="/signup"
+                class="auth-btn-signup text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2">
+                Sign Up
+              </a>
+            </div>
+
+            <!-- Profile Icon (Logged in users only - hidden on small mobile) -->
+            <div class="relative hidden sm:block" *ngIf="authService.isLoggedIn() || userService.currentUserProfile()">
               <button
                 (click)="showProfileMenu.update(v => !v)"
-                class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-                <!-- User Avatar with First Letter -->
+                class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 text-white flex items-center justify-center font-bold text-sm hover:from-rose-500 hover:to-rose-700 transition-all">
                   {{ getFirstLetter() }}
                 </div>
               </button>
 
-              <!-- Profile Dropdown Menu (Logged In) -->
-              <div *ngIf="showProfileMenu()" class="absolute right-0 top-12 bg-white shadow-lg rounded-lg p-2 min-w-48">
+              <!-- Profile Dropdown Menu -->
+              <div *ngIf="showProfileMenu()" class="absolute right-0 top-12 bg-white shadow-lg rounded-lg p-2 min-w-48 z-50">
                 <div class="px-4 py-2 border-b">
                   <p class="text-sm font-semibold text-gray-900">{{ userService.currentUserProfile()?.name || authService.currentUser()?.name }}</p>
                   <p class="text-xs text-gray-600">{{ authService.currentUser()?.role === 'admin' ? 'Admin' : 'User' }}</p>
@@ -198,27 +211,72 @@ interface NavItem {
               </div>
             </div>
 
-            <!-- Sign In / Sign Up Buttons (Guest only - OUTSIDE icon) -->
-            <div *ngIf="!(authService.isLoggedIn() || userService.currentUserProfile())" class="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200">
-              <a
-                routerLink="/signin"
-                class="auth-btn">
-                Sign In
-              </a>
-              <a
-                routerLink="/signup"
-                class="auth-btn">
-                Sign Up
-              </a>
-            </div>
-
-            <!-- User Icon (Guest only) -->
+            <!-- Mobile Menu Button -->
             <button
-              *ngIf="!(authService.isLoggedIn() || userService.currentUserProfile())"
-              class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-              <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              (click)="showMobileMenu.update(v => !v)"
+              class="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors ml-1">
+              <svg *ngIf="!showMobileMenu()" class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
               </svg>
+              <svg *ngIf="showMobileMenu()" class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div *ngIf="showMobileMenu()" class="lg:hidden bg-white border-t border-gray-200 py-4 space-y-2">
+          <a
+            *ngFor="let item of navItems"
+            [routerLink]="item.isRouterLink ? item.href : '/'"
+            [fragment]="item.isRouterLink ? undefined : item.href.substring(1)"
+            (click)="showMobileMenu.set(false)"
+            class="block px-4 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 font-medium transition-colors text-sm">
+            {{ item.label }}
+          </a>
+
+          <!-- Mobile Auth Buttons -->
+          <div *ngIf="!(authService.isLoggedIn() || userService.currentUserProfile())" class="sm:hidden border-t border-gray-200 pt-3 mt-3 px-4 space-y-2">
+            <a
+              routerLink="/signin"
+              (click)="showMobileMenu.set(false)"
+              class="block text-center auth-btn-signin text-sm py-2">
+              Sign In
+            </a>
+            <a
+              routerLink="/signup"
+              (click)="showMobileMenu.set(false)"
+              class="block text-center auth-btn-signup text-sm py-2">
+              Sign Up
+            </a>
+          </div>
+
+          <!-- Mobile Profile Menu -->
+          <div *ngIf="authService.isLoggedIn() || userService.currentUserProfile()" class="sm:hidden border-t border-gray-200 pt-3 mt-3 px-4 space-y-2">
+            <a
+              routerLink="/profile"
+              (click)="showMobileMenu.set(false)"
+              class="block px-2 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 text-sm">
+              My Profile
+            </a>
+            <a
+              routerLink="/orders"
+              (click)="showMobileMenu.set(false)"
+              class="block px-2 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 text-sm">
+              My Orders
+            </a>
+            <a
+              *ngIf="authService.isAdmin()"
+              routerLink="/admin"
+              (click)="showMobileMenu.set(false)"
+              class="block px-2 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 text-sm">
+              Dashboard
+            </a>
+            <button
+              (click)="authService.logout(); showMobileMenu.set(false)"
+              class="w-full text-left px-2 py-2 text-red-600 hover:bg-red-50 text-sm">
+              Logout
             </button>
           </div>
         </div>
@@ -281,17 +339,31 @@ interface NavItem {
       visibility: visible !important;
     }
 
-    .auth-btn {
-      padding: 0.5rem 1rem;
+    .auth-btn-signin {
       color: #ec4899;
       font-weight: 600;
-      font-size: 0.875rem;
       border-radius: 0.5rem;
       transition: all 0.3s ease;
+      border: 1px solid #ec4899;
+      display: inline-block;
     }
 
-    .auth-btn:hover {
+    .auth-btn-signin:hover {
+      background-color: #fce7f3;
+      color: #be185d;
+    }
+
+    .auth-btn-signup {
       background-color: #ec4899;
+      color: white;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .auth-btn-signup:hover {
+      background-color: #db2777;
       color: white;
     }
   `]
@@ -315,6 +387,7 @@ export class HeaderComponent {
   showProfileMenu = signal(false);
   showCartDrawer = signal(false);
   showWishlistDrawer = signal(false);
+  showMobileMenu = signal(false);
 
   constructor(
     public cartService: CartService,

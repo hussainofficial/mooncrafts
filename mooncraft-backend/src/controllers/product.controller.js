@@ -22,21 +22,18 @@ async function createProduct(req, res, next) {
     }
 
     const { name, description, price, category_id, material, material_id, stock, image, is_trending, is_new_arrival, is_best_seller, is_featured } = req.body;
-    const categoryId = category_id || req.body.categoryId; // Support both formats
-    const materialId = material_id || material; // Support both material and material_id
+    const categoryId = category_id || req.body.categoryId;
+    const materialId = material_id || material;
 
-    // Handle both file upload and base64 image
+    // Handle primary image
     let imageData = null;
     if (req.file) {
-      // Convert binary file to base64 data URL
       const base64 = req.file.buffer.toString('base64');
       const mimeType = req.file.mimetype || 'image/jpeg';
       imageData = `data:${mimeType};base64,${base64}`;
     } else if (image) {
-      // Validate that image is in proper format
       if (typeof image === 'string') {
         if (image.startsWith('data:image') || /^[A-Za-z0-9+/=]+$/.test(image)) {
-          // Accept both data URL and raw base64
           imageData = image.startsWith('data:image') ? image : `data:image/jpeg;base64,${image}`;
         } else {
           return res.status(400).json({
@@ -406,6 +403,219 @@ async function getProductImage(req, res, next) {
   }
 }
 
+async function uploadProductImages(req, res, next) {
+  try {
+    const { productId } = req.params;
+
+    // Check if product exists
+    const product = await productRepository.getProductById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No images provided'
+      });
+    }
+
+    // Limit to 5 images
+    if (req.files.length > 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'Maximum 5 images allowed'
+      });
+    }
+
+    // Convert uploaded files to URLs
+    const imageUrls = req.files.map(file => {
+      return `/uploads/products/${file.filename}`;
+    });
+
+    // Save image URLs to database
+    await productRepository.updateProductImages(productId, imageUrls);
+
+    res.json({
+      success: true,
+      message: 'Images uploaded successfully',
+      images: imageUrls,
+      productId: productId
+    });
+  } catch (error) {
+    // Clean up uploaded files if error occurs
+    if (req.files) {
+      const fs = require('fs');
+      const path = require('path');
+      req.files.forEach(file => {
+        const filepath = path.join(__dirname, '../../public/uploads/products', file.filename);
+        fs.unlink(filepath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+        });
+      });
+    }
+    next(error);
+  }
+}
+
+// NEW: Product Images Gallery Methods
+
+async function getProductGallery(req, res, next) {
+  try {
+    const { productId } = req.params;
+
+    // Verify product exists
+    const product = await productRepository.getProductById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Get all images for this product
+    const images = await productRepository.getProductImages(productId);
+
+    res.json({
+      success: true,
+      productId,
+      images: images || [],
+      count: images?.length || 0
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function addProductGalleryImages(req, res, next) {
+  try {
+    const { productId } = req.params;
+    const { images } = req.body;
+
+    // Verify product exists
+    const product = await productRepository.getProductById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Validate images array
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Images array is required and must not be empty'
+      });
+    }
+
+    // Limit to 10 images per product
+    if (images.length > 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'Maximum 10 images allowed per product'
+      });
+    }
+
+    // Validate each image is base64
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      if (!img.url && !img.image_url) {
+        return res.status(400).json({
+          success: false,
+          message: `Image ${i + 1}: url field is required`
+        });
+      }
+      if (typeof img.url !== 'string' && typeof img.image_url !== 'string') {
+        return res.status(400).json({
+          success: false,
+          message: `Image ${i + 1}: url must be a string`
+        });
+      }
+    }
+
+    // Add images to database
+    await productRepository.addProductImages(productId, images);
+
+    // Get updated images list
+    const updatedImages = await productRepository.getProductImages(productId);
+
+    res.status(201).json({
+      success: true,
+      message: `${images.length} image(s) added successfully`,
+      productId,
+      images: updatedImages,
+      count: updatedImages.length
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updateProductGalleryImageOrder(req, res, next) {
+  try {
+    const { productId } = req.params;
+    const { images } = req.body;
+
+    // Verify product exists
+    const product = await productRepository.getProductById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Validate images
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Images array is required'
+      });
+    }
+
+    // Update image order
+    await productRepository.updateImageOrder(productId, images);
+
+    // Get updated images
+    const updatedImages = await productRepository.getProductImages(productId);
+
+    res.json({
+      success: true,
+      message: 'Image order updated successfully',
+      images: updatedImages
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function deleteProductGalleryImage(req, res, next) {
+  try {
+    const { productId, imageId } = req.params;
+
+    // Verify product exists
+    const product = await productRepository.getProductById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Delete image
+    const deleted = await productRepository.deleteProductImage(imageId);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'Image not found' });
+    }
+
+    // Get updated images list
+    const updatedImages = await productRepository.getProductImages(productId);
+
+    res.json({
+      success: true,
+      message: 'Image deleted successfully',
+      images: updatedImages,
+      count: updatedImages.length
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   createProduct,
   listProducts,
@@ -416,5 +626,10 @@ module.exports = {
   getLowStockProducts,
   getProductStats,
   getTopProducts,
-  getProductImage
+  getProductImage,
+  uploadProductImages,
+  getProductGallery,
+  addProductGalleryImages,
+  updateProductGalleryImageOrder,
+  deleteProductGalleryImage
 };
