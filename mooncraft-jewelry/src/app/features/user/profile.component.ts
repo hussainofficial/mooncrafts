@@ -17,17 +17,17 @@ import { HeaderComponent } from '../home/components/header.component';
     <div class="min-h-screen bg-gray-50">
       <!-- Page Title Section -->
       <div class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-rose-500">My Profile</h1>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+          <h1 class="text-xl sm:text-2xl font-bold text-rose-500">My Profile</h1>
           <button
             (click)="logout()"
-            class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold">
+            class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold text-sm sm:text-base">
             Logout
           </button>
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div *ngIf="!userService.currentUserProfile() && !authService.isLoggedIn()" class="text-center py-12">
           <p class="text-gray-600 text-lg mb-4">Please login to view your profile</p>
           <a href="/login" class="inline-block px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold">
@@ -35,13 +35,13 @@ import { HeaderComponent } from '../home/components/header.component';
           </a>
         </div>
 
-        <div *ngIf="userService.currentUserProfile() || authService.isLoggedIn()" class="grid grid-cols-3 gap-6">
+        <div *ngIf="userService.currentUserProfile() || authService.isLoggedIn()" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Left Column - Profile Info -->
-          <div class="col-span-2 space-y-6">
+          <div class="lg:col-span-2 space-y-6">
             <!-- Personal Details -->
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
               <h2 class="text-xl font-bold mb-4">Personal Details</h2>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p class="text-sm text-gray-600">Name</p>
                   <p class="font-semibold text-gray-900">{{ userService.currentUserProfile()?.name || authService.currentUser()?.name }}</p>

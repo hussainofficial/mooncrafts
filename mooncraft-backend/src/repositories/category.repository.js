@@ -1,14 +1,14 @@
 const { getConnection } = require('../../config/database');
 
 class CategoryRepository {
-  async createCategory(name, description, image, slug) {
+  async createCategory(name, slug, description, type) {
     const connection = await getConnection();
     try {
       const query = `
-        INSERT INTO categories (name, description, image_url, slug)
+        INSERT INTO categories (name, slug, description, type)
         VALUES (?, ?, ?, ?)
       `;
-      const [result] = await connection.execute(query, [name, description, image, slug]);
+      const [result] = await connection.execute(query, [name, slug, description, type]);
       return result.insertId;
     } finally {
       connection.release();

@@ -36,21 +36,21 @@ import { HeaderComponent } from '../home/components/header.component';
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-4 py-8">
+      <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         <!-- Back Button -->
         <button
           (click)="goBackToCheckout()"
-          class="mb-6 flex items-center gap-2 text-rose-500 hover:text-rose-600 font-semibold transition-colors">
-          <span class="text-2xl">←</span>
+          class="mb-4 sm:mb-6 flex items-center gap-2 text-rose-500 hover:text-rose-600 font-semibold transition-colors text-sm sm:text-base">
+          <span class="text-xl sm:text-2xl">←</span>
           Back to Checkout
         </button>
 
-        <div class="grid grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <!-- Left Column - Payment Methods -->
-          <div class="col-span-2 space-y-6">
+          <div class="lg:col-span-2 space-y-4 sm:space-y-6">
             <!-- Payment Method Selection -->
-            <div class="bg-white rounded-lg shadow p-6">
-              <h2 class="text-xl font-bold text-gray-900 mb-6">Select Payment Method</h2>
+            <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Select Payment Method</h2>
 
               <div class="space-y-3">
                 <div *ngFor="let method of checkoutService.paymentMethods"
@@ -141,8 +141,8 @@ import { HeaderComponent } from '../home/components/header.component';
           </div>
 
           <!-- Right Column - Order Summary (Invoice Style) -->
-          <div class="bg-white rounded-lg shadow p-6 h-fit sticky top-20">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">📋 Order Summary</h2>
+          <div class="bg-white rounded-lg shadow p-4 sm:p-6 h-fit lg:sticky lg:top-20">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">📋 Order Summary</h2>
 
             <!-- Customer Details -->
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">

@@ -155,6 +155,7 @@ class RazorpayService {
       // Update payment status to failed
       try {
         await paymentRepository.updatePaymentStatus(orderId, 'failed', {
+          gatewayName: 'razorpay',
           failureReason: error.message
         });
       } catch (updateError) {
@@ -170,6 +171,7 @@ class RazorpayService {
     try {
       await paymentRepository.updatePaymentStatus(orderId, 'failed', {
         razorpayPaymentId: paymentId,
+        gatewayName: 'razorpay',
         failureReason: error
       });
 

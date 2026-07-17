@@ -5,7 +5,7 @@ class CollectionRepository {
     const connection = await getConnection();
     try {
       const query = `
-        INSERT INTO collections (name, slug, description, image, is_active, created_at, updated_at)
+        INSERT INTO collections (name, slug, description, image_url, is_active, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, NOW(), NOW())
       `;
       const [result] = await connection.execute(query, [name, slug, description, image, is_active ? 1 : 0]);
@@ -68,7 +68,7 @@ class CollectionRepository {
       const { name, slug, description, image, is_active } = updateData;
       const query = `
         UPDATE collections
-        SET name = ?, slug = ?, description = ?, image = ?, is_active = ?, updated_at = NOW()
+        SET name = ?, slug = ?, description = ?, image_url = ?, is_active = ?, updated_at = NOW()
         WHERE id = ?
       `;
       await connection.execute(query, [name, slug, description, image, is_active ? 1 : 0, collectionId]);

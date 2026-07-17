@@ -15,15 +15,15 @@ import { HeaderComponent } from '../home/components/header.component';
     <div class="min-h-screen bg-gray-50">
       <!-- Page Title -->
       <div class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-gray-900">My Orders</h1>
-          <a href="/" class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+          <h1 class="text-xl sm:text-2xl font-bold text-gray-900">My Orders</h1>
+          <a href="/" class="px-4 sm:px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold text-sm sm:text-base">
             Continue Shopping
           </a>
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <!-- Empty State -->
         <div *ngIf="orders().length === 0" class="text-center py-16 bg-white rounded-lg shadow">
           <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,10 +41,10 @@ import { HeaderComponent } from '../home/components/header.component';
           <!-- Order Card -->
           <div *ngFor="let order of orders()" class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
             <!-- Order Header -->
-            <div class="border-b p-6 flex items-center justify-between">
-              <div class="flex-1">
-                <div class="flex items-center gap-4 mb-2">
-                  <h2 class="text-lg font-bold text-gray-900">Order #{{ order.orderId }}</h2>
+            <div class="border-b p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
+                  <h2 class="text-base sm:text-lg font-bold text-gray-900">Order #{{ order.orderId }}</h2>
                   <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
                     ✓ Delivered
                   </span>
@@ -53,29 +53,29 @@ import { HeaderComponent } from '../home/components/header.component';
                   Placed on {{ formatDate(order.timestamp) }}
                 </p>
               </div>
-              <div class="text-right">
+              <div class="text-left sm:text-right">
                 <p class="text-sm text-gray-600">Order Total</p>
-                <p class="text-2xl font-bold text-rose-600">₹{{ order.amount }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-rose-600">₹{{ order.amount }}</p>
               </div>
             </div>
 
             <!-- Order Items -->
-            <div class="p-6 border-b">
+            <div class="p-4 sm:p-6 border-b">
               <h3 class="font-semibold text-gray-900 mb-4">Items ({{ order.cartItems.length }})</h3>
               <div class="space-y-3">
-                <div *ngFor="let item of order.cartItems" class="flex items-center gap-4 pb-3 border-b last:border-b-0">
-                  <img [src]="item.product.image" [alt]="item.product.name" class="w-16 h-16 rounded-lg object-cover">
-                  <div class="flex-1">
-                    <p class="font-semibold text-gray-900">{{ item.product.name }}</p>
+                <div *ngFor="let item of order.cartItems" class="flex items-center gap-3 sm:gap-4 pb-3 border-b last:border-b-0">
+                  <img [src]="item.product.image" [alt]="item.product.name" class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-gray-900 truncate">{{ item.product.name }}</p>
                     <p class="text-sm text-gray-600">Qty: {{ item.quantity }}</p>
                   </div>
-                  <p class="font-bold text-gray-900">₹{{ item.product.price * item.quantity }}</p>
+                  <p class="font-bold text-gray-900 flex-shrink-0">₹{{ item.product.price * item.quantity }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Order Details & Actions -->
-            <div class="p-6 grid grid-cols-3 gap-6">
+            <div class="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
               <!-- Shipping Info -->
               <div>
                 <p class="text-sm text-gray-600 font-semibold mb-2">Shipping Address</p>
@@ -105,9 +105,9 @@ import { HeaderComponent } from '../home/components/header.component';
             </div>
 
             <!-- Order Footer with Actions -->
-            <div class="p-6 bg-gray-50 rounded-b-lg flex items-center justify-between border-t">
+            <div class="p-4 sm:p-6 bg-gray-50 rounded-b-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t">
               <div class="flex items-center gap-2 text-sm">
-                <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
                 <span class="text-gray-700">Order confirmed and paid</span>
@@ -115,12 +115,12 @@ import { HeaderComponent } from '../home/components/header.component';
               <div class="flex gap-3">
                 <button
                   (click)="trackOrder(order)"
-                  class="px-6 py-2 border-2 border-rose-500 text-rose-600 rounded-lg hover:bg-rose-50 font-semibold transition-colors">
+                  class="flex-1 sm:flex-none px-4 sm:px-6 py-2 border-2 border-rose-500 text-rose-600 rounded-lg hover:bg-rose-50 font-semibold transition-colors text-sm sm:text-base">
                   Track Order
                 </button>
                 <button
                   (click)="viewOrderDetails(order)"
-                  class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
+                  class="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors text-sm sm:text-base">
                   View Details
                 </button>
               </div>
@@ -134,8 +134,8 @@ import { HeaderComponent } from '../home/components/header.component';
     <div *ngIf="showDetailsModal() && selectedOrder()" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
-        <div class="sticky top-0 bg-white border-b p-6 flex items-center justify-between">
-          <h2 class="text-2xl font-bold text-gray-900">Order Details</h2>
+        <div class="sticky top-0 bg-white border-b p-4 sm:p-6 flex items-center justify-between">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Order Details</h2>
           <button
             (click)="closeDetailsModal()"
             class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -146,20 +146,20 @@ import { HeaderComponent } from '../home/components/header.component';
         </div>
 
         <!-- Modal Content -->
-        <div class="p-6 space-y-6">
+        <div class="p-4 sm:p-6 space-y-6">
           <!-- Order IDs -->
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-gray-50 rounded-lg p-4">
               <p class="text-xs text-gray-600 font-semibold mb-1">Order ID</p>
-              <p class="text-lg font-mono font-bold text-gray-900">{{ selectedOrder()!.orderId }}</p>
+              <p class="text-lg font-mono font-bold text-gray-900 break-all">{{ selectedOrder()!.orderId }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4">
               <p class="text-xs text-gray-600 font-semibold mb-1">Transaction ID</p>
-              <p class="text-lg font-mono font-bold text-gray-900 truncate">{{ selectedOrder()!.transactionId }}</p>
+              <p class="text-lg font-mono font-bold text-gray-900 break-all">{{ selectedOrder()!.transactionId }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4">
               <p class="text-xs text-gray-600 font-semibold mb-1">Payment ID</p>
-              <p class="text-lg font-mono font-bold text-gray-900 truncate">{{ selectedOrder()!.paymentId }}</p>
+              <p class="text-lg font-mono font-bold text-gray-900 break-all">{{ selectedOrder()!.paymentId }}</p>
             </div>
           </div>
 

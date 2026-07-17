@@ -11,7 +11,7 @@ import { LoaderService } from '../../core/services/loader.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-rose-50 to-pink-50 flex items-center justify-center px-4">
-      <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+      <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-8">
         <!-- Logo -->
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-rose-500">MOONCRAFT</h1>

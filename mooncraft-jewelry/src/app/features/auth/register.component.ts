@@ -13,7 +13,7 @@ import { StateCitySelectComponent } from '../../shared/components/state-city-sel
   imports: [CommonModule, FormsModule, StateCitySelectComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-rose-50 to-pink-50 flex items-center justify-center px-4 py-8">
-      <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8">
+      <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-4 sm:p-8">
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-rose-500">MOONCRAFT</h1>
           <p class="text-gray-600 mt-2">Create Your Account</p>

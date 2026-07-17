@@ -13,39 +13,39 @@ import { HeaderComponent } from '../home/components/header.component';
     <app-header></app-header>
 
     <div class="min-h-screen bg-gradient-to-b from-green-50 to-gray-50">
-      <div class="max-w-2xl mx-auto px-4 py-16">
+      <div class="max-w-2xl mx-auto px-4 py-8 sm:py-16">
         <!-- Success Animation -->
-        <div class="text-center mb-12">
+        <div class="text-center mb-8 sm:mb-12">
           <div class="inline-block mb-6">
-            <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
-              <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 sm:w-24 sm:h-24 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
+              <svg class="w-8 h-8 sm:w-12 sm:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
               </svg>
             </div>
           </div>
 
-          <h1 class="text-4xl font-bold text-gray-900 mb-3">Payment Successful! 🎉</h1>
-          <p class="text-xl text-gray-600 mb-8">Thank you for your order. Your luxury jewelry is on its way!</p>
+          <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">Payment Successful! 🎉</h1>
+          <p class="text-base sm:text-xl text-gray-600 mb-8">Thank you for your order. Your luxury jewelry is on its way!</p>
         </div>
 
         <!-- Order Details Card -->
-        <div *ngIf="order" class="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Order Details</h2>
+        <div *ngIf="order" class="bg-white rounded-xl shadow-lg p-4 sm:p-8 mb-8">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Order Details</h2>
 
-          <div class="grid grid-cols-2 gap-8 mb-8 pb-8 border-b">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-8 pb-8 border-b">
             <!-- Left Column -->
             <div class="space-y-6">
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Order ID</p>
-                <p class="text-lg font-bold text-gray-900 font-mono">{{ order.orderId }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900 font-mono break-all">{{ order.orderId }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Transaction ID</p>
-                <p class="text-lg font-bold text-gray-900 font-mono">{{ order.transactionId }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900 font-mono break-all">{{ order.transactionId }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Payment ID</p>
-                <p class="text-lg font-bold text-gray-900 font-mono">{{ order.paymentId }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900 font-mono break-all">{{ order.paymentId }}</p>
               </div>
             </div>
 
@@ -53,15 +53,15 @@ import { HeaderComponent } from '../home/components/header.component';
             <div class="space-y-6">
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Date & Time</p>
-                <p class="text-lg font-bold text-gray-900">{{ formatDate(order.timestamp) }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900">{{ formatDate(order.timestamp) }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Payment Method</p>
-                <p class="text-lg font-bold text-gray-900">{{ order.paymentMethod }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900">{{ order.paymentMethod }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Amount Paid</p>
-                <p class="text-2xl font-bold text-rose-600">₹{{ order.amount }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-rose-600">₹{{ order.amount }}</p>
               </div>
             </div>
           </div>

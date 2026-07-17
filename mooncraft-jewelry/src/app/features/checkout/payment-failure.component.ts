@@ -13,23 +13,23 @@ import { HeaderComponent } from '../home/components/header.component';
     <app-header></app-header>
 
     <div class="min-h-screen bg-gradient-to-b from-red-50 to-gray-50">
-      <div class="max-w-2xl mx-auto px-4 py-16">
+      <div class="max-w-2xl mx-auto px-4 py-8 sm:py-16">
         <!-- Error Animation -->
-        <div class="text-center mb-12">
+        <div class="text-center mb-8 sm:mb-12">
           <div class="inline-block mb-6">
-            <div class="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center">
-              <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 sm:w-24 sm:h-24 bg-red-500 rounded-full flex items-center justify-center">
+              <svg class="w-8 h-8 sm:w-12 sm:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </div>
           </div>
 
-          <h1 class="text-4xl font-bold text-gray-900 mb-3">Payment Failed</h1>
-          <p class="text-xl text-gray-600 mb-8">Your payment could not be processed. Please try again or use a different payment method.</p>
+          <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">Payment Failed</h1>
+          <p class="text-base sm:text-xl text-gray-600 mb-8">Your payment could not be processed. Please try again or use a different payment method.</p>
         </div>
 
         <!-- Error Details Card -->
-        <div *ngIf="order" class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <div *ngIf="order" class="bg-white rounded-xl shadow-lg p-4 sm:p-8 mb-8">
           <div class="border-l-4 border-red-500 pl-4 mb-6">
             <h2 class="text-lg font-bold text-gray-900 mb-2">Payment Declined</h2>
             <p class="text-gray-600">Your payment method was declined. This might be due to:</p>
@@ -41,16 +41,16 @@ import { HeaderComponent } from '../home/components/header.component';
             </ul>
           </div>
 
-          <div class="grid grid-cols-2 gap-8 mb-8 pb-8 border-b">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-8 pb-8 border-b">
             <!-- Left Column -->
             <div class="space-y-4">
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Attempted Order ID</p>
-                <p class="text-lg font-bold text-gray-900 font-mono">{{ order.orderId }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900 font-mono break-all">{{ order.orderId }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Amount Attempted</p>
-                <p class="text-2xl font-bold text-red-600">₹{{ order.amount }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-red-600">₹{{ order.amount }}</p>
               </div>
             </div>
 
@@ -58,11 +58,11 @@ import { HeaderComponent } from '../home/components/header.component';
             <div class="space-y-4">
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Payment Method</p>
-                <p class="text-lg font-bold text-gray-900">{{ order.paymentMethod }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900">{{ order.paymentMethod }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-600 font-semibold">Failure Time</p>
-                <p class="text-lg font-bold text-gray-900">{{ formatDate(order.timestamp) }}</p>
+                <p class="text-base sm:text-lg font-bold text-gray-900">{{ formatDate(order.timestamp) }}</p>
               </div>
             </div>
           </div>

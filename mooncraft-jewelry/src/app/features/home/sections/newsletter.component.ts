@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
     <section class="py-12 md:py-16 px-4 bg-gradient-to-r from-rose-100 to-pink-100">
       <div class="max-w-2xl mx-auto">
         <div class="text-center">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Join Our Newsletter</h2>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Join Our Newsletter</h2>
           <p class="text-gray-700 mb-8">
             Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.
           </p>

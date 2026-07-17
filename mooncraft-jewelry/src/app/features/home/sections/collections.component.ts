@@ -12,7 +12,7 @@ import { CollectionService } from '../../../core/services/collection.service';
       <div class="w-full max-w-7xl mx-auto">
         <!-- Title -->
         <div class="text-center mb-8">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Shop by Collection</h2>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Shop by Collection</h2>
           <p class="text-sm text-gray-600 max-w-2xl mx-auto">
             Explore our curated collections for every moment of your life
           </p>

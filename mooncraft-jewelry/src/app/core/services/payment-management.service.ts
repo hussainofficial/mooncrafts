@@ -10,6 +10,7 @@ export interface Payment {
   amount: number;
   payment_method: 'credit_card' | 'debit_card' | 'upi' | 'wallet';
   transaction_id: string;
+  gateway_order_id?: string;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
   created_at: string;
   updated_at?: string;

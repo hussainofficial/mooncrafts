@@ -9,8 +9,8 @@ import { StateCitySelectComponent } from '../../shared/components/state-city-sel
   standalone: true,
   imports: [CommonModule, FormsModule, StateCitySelectComponent],
   template: `
-    <div class="min-h-screen bg-pink-50 p-8">
-      <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div class="min-h-screen bg-pink-50 p-4 sm:p-8">
+      <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-4 sm:p-8">
         <h1 class="text-3xl font-bold text-rose-500 mb-8">NEW REGISTER FORM</h1>
 
         <!-- EMAIL VALIDATION TEST -->

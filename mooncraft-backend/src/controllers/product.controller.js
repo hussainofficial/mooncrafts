@@ -23,7 +23,7 @@ async function createProduct(req, res, next) {
 
     const { name, description, price, category_id, material, material_id, stock, image, is_trending, is_new_arrival, is_best_seller, is_featured } = req.body;
     const categoryId = category_id || req.body.categoryId;
-    const materialId = material_id || material;
+    const materialId = material_id || material || req.body.materialId;
 
     // Handle primary image
     let imageData = null;
@@ -139,7 +139,7 @@ async function updateProduct(req, res, next) {
     const { productId } = req.params;
     const { name, description, price, category_id, material, material_id, stock, status, image, is_trending, is_new_arrival, is_best_seller, is_featured } = req.body;
     const categoryId = category_id || req.body.categoryId; // Support both formats
-    const materialId = material_id || material; // Support both material and material_id
+    const materialId = material_id || material || req.body.materialId; // Support material_id, material, and materialId
 
     const product = await productRepository.getProductById(productId);
     if (!product) {

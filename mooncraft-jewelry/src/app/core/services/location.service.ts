@@ -26,7 +26,7 @@ export interface SearchResult {
   providedIn: 'root',
 })
 export class LocationService {
-  private apiUrl = '${environment.apiUrl/locations';
+  private apiUrl = `${environment.apiUrl}/locations`;
 
   states = signal<State[]>([]);
   cities = signal<City[]>([]);

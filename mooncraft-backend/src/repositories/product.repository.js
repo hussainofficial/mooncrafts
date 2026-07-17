@@ -311,18 +311,7 @@ class ProductRepository {
   }
 
   async updateProductImages(productId, imageUrls) {
-    const connection = await getConnection();
-    try {
-      const imagesJson = JSON.stringify(imageUrls);
-      const query = `
-        UPDATE products
-        SET images = ?
-        WHERE id = ?
-      `;
-      await connection.execute(query, [imagesJson, productId]);
-    } finally {
-      connection.release();
-    }
+    return this.addProductImages(productId, imageUrls.map(url => ({ url })));
   }
 
   // NEW: Product Images Table Methods

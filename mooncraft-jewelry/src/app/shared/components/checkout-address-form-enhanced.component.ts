@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { LocationService, State } from '../../core/services/location.service';
 import { LoaderService } from '../../core/services/loader.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-checkout-address-form-enhanced',
@@ -329,7 +330,7 @@ export class CheckoutAddressFormEnhancedComponent implements OnInit {
   }
 
   loadStates() {
-    this.locationService.http.get<any>('http://localhost:5000/api/v1/locations/states').subscribe({
+    this.locationService.http.get<any>(`${environment.apiUrl}/locations/states`).subscribe({
       next: (response) => {
         if (response.success) {
           this.states.set(response.data);
@@ -407,7 +408,7 @@ export class CheckoutAddressFormEnhancedComponent implements OnInit {
     this.cities.set([]);
 
     if (stateId) {
-      this.locationService.http.get<any>(`http://localhost:5000/api/v1/locations/states/${stateId}/cities`).subscribe({
+      this.locationService.http.get<any>(`${environment.apiUrl}/locations/states/${stateId}/cities`).subscribe({
         next: (response) => {
           if (response.success) {
             this.cities.set(response.data);

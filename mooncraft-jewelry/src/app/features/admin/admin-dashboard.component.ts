@@ -39,21 +39,21 @@ import { Product } from '../../core/models';
 
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-rose-500">MOONCRAFT Admin</h1>
-          <p class="text-sm text-gray-600">Welcome, {{ authService.currentUser()?.name || 'Guest' }}</p>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h1 class="text-lg sm:text-2xl font-bold text-rose-500 truncate">MOONCRAFT Admin</h1>
+          <p class="text-xs sm:text-sm text-gray-600 truncate">Welcome, {{ authService.currentUser()?.name || 'Guest' }}</p>
         </div>
         <button
           *ngIf="authService.isLoggedIn()"
           (click)="logout()"
-          class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold">
+          class="flex-shrink-0 px-4 sm:px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold text-sm sm:text-base">
           Logout
         </button>
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-6 py-8" *ngIf="authService.isAdminUser()">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8" *ngIf="authService.isAdminUser()">
       <!-- Error Message -->
       <div *ngIf="errorMessage()" class="bg-red-50 border-b-2 border-red-500 p-4 mb-6 rounded-lg">
         <p class="text-red-700 font-semibold">❌ {{ errorMessage() }}</p>
@@ -114,14 +114,14 @@ import { Product } from '../../core/models';
       </div>
 
       <!-- Tab Navigation Container -->
-      <div class="bg-white rounded-2xl shadow-md p-4 mb-8">
-        <div class="flex gap-4 flex-wrap">
+      <div class="bg-white rounded-2xl shadow-md p-3 sm:p-4 mb-6 sm:mb-8">
+        <div class="flex gap-2 sm:gap-4 flex-wrap">
           <button
             (click)="switchTab('products')"
             [class.bg-rose-500]="activeTab() === 'products'"
             [class.text-white]="activeTab() === 'products'"
             [class.bg-gray-200]="activeTab() !== 'products'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Products Management
           </button>
           <button
@@ -129,7 +129,7 @@ import { Product } from '../../core/models';
             [class.bg-rose-500]="activeTab() === 'add'"
             [class.text-white]="activeTab() === 'add'"
             [class.bg-gray-200]="activeTab() !== 'add'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Add New Product
           </button>
           <button
@@ -137,7 +137,7 @@ import { Product } from '../../core/models';
             [class.bg-rose-500]="activeTab() === 'categories'"
             [class.text-white]="activeTab() === 'categories'"
             [class.bg-gray-200]="activeTab() !== 'categories'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Categories
           </button>
           <button
@@ -145,7 +145,7 @@ import { Product } from '../../core/models';
             [class.bg-rose-500]="activeTab() === 'users'"
             [class.text-white]="activeTab() === 'users'"
             [class.bg-gray-200]="activeTab() !== 'users'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Users
           </button>
           <button
@@ -153,7 +153,7 @@ import { Product } from '../../core/models';
             [class.bg-rose-500]="activeTab() === 'analytics'"
             [class.text-white]="activeTab() === 'analytics'"
             [class.bg-gray-200]="activeTab() !== 'analytics'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Analytics
           </button>
           <button
@@ -161,7 +161,7 @@ import { Product } from '../../core/models';
             [class.bg-rose-500]="activeTab() === 'orders'"
             [class.text-white]="activeTab() === 'orders'"
             [class.bg-gray-200]="activeTab() !== 'orders'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Orders
           </button>
           <button
@@ -169,7 +169,7 @@ import { Product } from '../../core/models';
             [class.bg-rose-500]="activeTab() === 'payments'"
             [class.text-white]="activeTab() === 'payments'"
             [class.bg-gray-200]="activeTab() !== 'payments'"
-            class="px-6 py-2 rounded-lg font-semibold transition-colors hover:shadow-md">
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Payments
           </button>
         </div>
@@ -177,14 +177,14 @@ import { Product } from '../../core/models';
 
       <!-- Products List Tab -->
       <div *ngIf="activeTab() === 'products'" class="space-y-6">
-        <div class="flex items-center justify-between">
-          <h2 class="text-2xl font-bold text-gray-900">Products ({{ productService.products().length }} total)</h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 class="text-lg sm:text-2xl font-bold text-gray-900">Products ({{ productService.products().length }} total)</h2>
           <input
             type="text"
             [(ngModel)]="productSearchQuery"
             (ngModelChange)="performProductSearch()"
             placeholder="Search products..."
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
+            class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
         </div>
 
         <!-- Products Table -->
@@ -235,15 +235,15 @@ import { Product } from '../../core/models';
         </div>
 
         <!-- Pagination Controls -->
-        <div class="flex items-center justify-between bg-white p-4 rounded-lg shadow">
-          <div class="text-sm text-gray-600">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-lg shadow">
+          <div class="text-sm text-gray-600 text-center sm:text-left">
             Page {{ currentPage() }} of {{ getTotalPages() }} | Showing {{ getPaginatedProducts().length }} of {{ getFilteredProducts().length }} products
           </div>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap justify-center gap-2">
             <button
               (click)="prevPage()"
               [disabled]="currentPage() === 1"
-              class="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400">
+              class="px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-300 text-gray-900 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400">
               ← Previous
             </button>
             <button
@@ -252,13 +252,13 @@ import { Product } from '../../core/models';
               [class.bg-rose-500]="currentPage() === i + 1"
               [class.text-white]="currentPage() === i + 1"
               [class.bg-gray-200]="currentPage() !== i + 1"
-              class="px-3 py-2 rounded-lg font-semibold">
+              class="px-3 py-2 text-sm sm:text-base rounded-lg font-semibold">
               {{ i + 1 }}
             </button>
             <button
               (click)="nextPage()"
               [disabled]="currentPage() === getTotalPages()"
-              class="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400">
+              class="px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-300 text-gray-900 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400">
               Next →
             </button>
           </div>
@@ -271,9 +271,9 @@ import { Product } from '../../core/models';
       </div>
 
       <!-- Add/Edit Product Form -->
-      <div *ngIf="activeTab() === 'add' || showEditForm()" class="flex justify-center py-8">
-        <div class="bg-white rounded-2xl shadow-lg p-10 w-full max-w-4xl">
-          <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+      <div *ngIf="activeTab() === 'add' || showEditForm()" class="flex justify-center py-4 sm:py-8">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-10 w-full max-w-4xl">
+          <h2 class="text-xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">
             {{ editingProduct() ? '✏️ Edit Product' : '➕ Add New Product' }}
           </h2>
 
@@ -473,12 +473,12 @@ import { Product } from '../../core/models';
                       {{ i + 1 }}
                     </span>
 
-                    <!-- Delete Button -->
-                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded flex items-center justify-center transition">
+                    <!-- Delete Button (always visible on touch devices, hover-reveal on desktop) -->
+                    <div class="absolute inset-0 bg-black/30 lg:bg-black/0 lg:group-hover:bg-black/50 rounded flex items-center justify-center transition">
                       <button
                         type="button"
                         (click)="removeGalleryImage(i)"
-                        class="hidden group-hover:block bg-red-500 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-red-600">
+                        class="block lg:hidden lg:group-hover:block bg-red-500 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-red-600">
                         Delete
                       </button>
                     </div>
@@ -580,9 +580,9 @@ import { Product } from '../../core/models';
 
       <!-- Categories Tab -->
       <div *ngIf="activeTab() === 'categories'" class="space-y-6">
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">🏷️ Categories Management</h2>
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">🏷️ Categories Management</h2>
             <button
               (click)="openAddCategoryForm()"
               class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
@@ -735,9 +735,9 @@ import { Product } from '../../core/models';
 
       <!-- Users Tab -->
       <div *ngIf="activeTab() === 'users'" class="space-y-6">
-        <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">👥 Users Management</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">👥 Users Management</h2>
           </div>
 
           <!-- Search -->
@@ -945,7 +945,7 @@ import { Product } from '../../core/models';
         </div>
 
         <!-- Order Status Breakdown -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
           <h3 class="text-xl font-bold text-gray-900 mb-6">Order Status Breakdown</h3>
           <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -972,7 +972,7 @@ import { Product } from '../../core/models';
         </div>
 
         <!-- Payment Stats -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
           <h3 class="text-xl font-bold text-gray-900 mb-6">Payment Statistics</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -995,7 +995,7 @@ import { Product } from '../../core/models';
         </div>
 
         <!-- Orders Analytics Table -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
           <h3 class="text-xl font-bold text-gray-900 mb-6">📈 Orders Analytics</h3>
           <div class="overflow-x-auto">
             <table class="w-full">
@@ -1074,7 +1074,7 @@ import { Product } from '../../core/models';
         </div>
 
         <!-- Top Products Table -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
           <h3 class="text-xl font-bold text-gray-900 mb-6">⭐ Top Products by Price</h3>
           <div class="overflow-x-auto">
             <table class="w-full">
@@ -1121,9 +1121,9 @@ import { Product } from '../../core/models';
 
       <!-- Orders Tab -->
       <div *ngIf="activeTab() === 'orders'" class="space-y-6">
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">📦 Orders Management</h2>
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">📦 Orders Management</h2>
             <button
               (click)="loadOrders()"
               class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
@@ -1178,9 +1178,9 @@ import { Product } from '../../core/models';
 
       <!-- Payments Tab -->
       <div *ngIf="activeTab() === 'payments'" class="space-y-6">
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">💳 Payments Management</h2>
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">💳 Payments Management</h2>
             <button
               (click)="loadPayments()"
               class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
@@ -1203,7 +1203,13 @@ import { Product } from '../../core/models';
               </thead>
               <tbody>
                 <tr *ngFor="let payment of paymentManagementService.getPayments()" class="border-b hover:bg-gray-50 transition-colors">
-                  <td class="px-6 py-4 text-sm font-mono text-gray-600">{{ payment.transaction_id }}</td>
+                  <td class="px-6 py-4 text-sm font-mono text-gray-600">
+                    <span *ngIf="payment.transaction_id">{{ payment.transaction_id }}</span>
+                    <span *ngIf="!payment.transaction_id && payment.gateway_order_id" title="Razorpay order ID (no payment ID — payment was not completed)">
+                      {{ payment.gateway_order_id }}
+                    </span>
+                    <span *ngIf="!payment.transaction_id && !payment.gateway_order_id" class="text-gray-400">—</span>
+                  </td>
                   <td class="px-6 py-4 text-sm font-mono text-gray-600">{{ payment.order_id }}</td>
                   <td class="px-6 py-4 font-semibold">₹{{ payment.amount }}</td>
                   <td class="px-6 py-4 text-sm text-gray-600 capitalize">{{ payment.payment_method.replace('_', ' ') || 'N/A' }}</td>

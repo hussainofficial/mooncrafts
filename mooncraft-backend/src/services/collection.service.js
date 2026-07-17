@@ -85,7 +85,7 @@ class CollectionService {
       name: name || collection.name,
       slug: slug || collection.slug,
       description: description !== undefined ? description : collection.description,
-      image: image !== undefined ? image : collection.image,
+      image: image !== undefined ? image : collection.image_url,
       is_active: is_active !== undefined ? is_active : collection.is_active
     };
 

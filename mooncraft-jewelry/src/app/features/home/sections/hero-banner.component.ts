@@ -31,14 +31,14 @@ import { Banner } from '../../../core/models';
           <div class="absolute inset-0 flex flex-col justify-end pb-20 md:pb-24 px-6 md:px-12 text-white z-5">
             <div class="max-w-2xl">
               <p class="text-rose-300 font-semibold mb-3 text-sm md:text-base">{{ currentSlide() + 1 }} / {{ banners.length }}</p>
-              <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
+              <h1 class="text-2xl sm:text-4xl md:text-6xl font-bold mb-2 sm:mb-4 leading-tight">
                 {{ banners[currentSlide()]?.title }}
               </h1>
-              <p class="text-lg md:text-xl mb-8 text-gray-200 max-w-xl">
+              <p class="text-sm sm:text-lg md:text-xl mb-4 sm:mb-8 text-gray-200 max-w-xl">
                 {{ banners[currentSlide()]?.subtitle }}
               </p>
               <button
-                class="bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95"
+                class="bg-rose-500 hover:bg-rose-600 text-white px-5 sm:px-8 py-2 sm:py-3 text-sm sm:text-base rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95"
                 (click)="onCtaClick(banners[currentSlide()]?.ctaLink || '#')"
               >
                 {{ banners[currentSlide()]?.cta }}
@@ -58,9 +58,9 @@ import { Banner } from '../../../core/models';
         <!-- Previous Button -->
         <button
           (click)="previousSlide()"
-          class="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/20 hover:bg-white/40 rounded-full transition-all duration-300 backdrop-blur-sm group/btn"
+          class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-white/20 hover:bg-white/40 rounded-full transition-all duration-300 backdrop-blur-sm group/btn"
         >
-          <svg class="w-6 h-6 text-white transform group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white transform group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
@@ -68,9 +68,9 @@ import { Banner } from '../../../core/models';
         <!-- Next Button -->
         <button
           (click)="nextSlide()"
-          class="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/20 hover:bg-white/40 rounded-full transition-all duration-300 backdrop-blur-sm group/btn"
+          class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-white/20 hover:bg-white/40 rounded-full transition-all duration-300 backdrop-blur-sm group/btn"
         >
-          <svg class="w-6 h-6 text-white transform group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white transform group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>

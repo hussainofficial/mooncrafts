@@ -38,7 +38,7 @@ class UserRepository {
     const connection = await getConnection();
     try {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      const query = 'UPDATE users SET password = ? WHERE id = ?';
+      const query = 'UPDATE users SET password_hash = ? WHERE id = ?';
       await connection.execute(query, [hashedPassword, userId]);
     } finally {
       connection.release();
@@ -48,11 +48,11 @@ class UserRepository {
   async verifyPassword(userId, plainPassword) {
     const connection = await getConnection();
     try {
-      const query = 'SELECT password FROM users WHERE id = ?';
+      const query = 'SELECT password_hash FROM users WHERE id = ?';
       const [rows] = await connection.execute(query, [userId]);
       if (!rows[0]) return false;
 
-      return await bcrypt.compare(plainPassword, rows[0].password);
+      return await bcrypt.compare(plainPassword, rows[0].password_hash);
     } finally {
       connection.release();
     }

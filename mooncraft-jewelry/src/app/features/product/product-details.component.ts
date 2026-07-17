@@ -32,7 +32,7 @@ import Drift from 'drift-zoom';
       </div>
 
       <div class="max-w-7xl mx-auto px-4 py-8" *ngIf="product()">
-        <div class="grid grid-cols-2 gap-8 lg:gap-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <!-- Image Section - Gallery (Left) -->
           <div class="space-y-4">
             <!-- Main Image with Drift.js Zoom -->
@@ -103,15 +103,15 @@ import Drift from 'drift-zoom';
               <!-- Left Arrow -->
               <button
                 (click)="prevImage()"
-                class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 sm:-translate-x-16 text-white hover:text-gray-300 transition-colors">
-                <span class="text-3xl sm:text-5xl font-bold">‹</span>
+                class="absolute left-1 sm:left-0 top-1/2 transform -translate-y-1/2 sm:-translate-x-16 text-white hover:text-gray-300 transition-colors bg-black/30 sm:bg-transparent rounded-full p-1">
+                <span class="text-2xl sm:text-5xl font-bold">‹</span>
               </button>
 
               <!-- Right Arrow -->
               <button
                 (click)="nextImage()"
-                class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 sm:translate-x-16 text-white hover:text-gray-300 transition-colors">
-                <span class="text-3xl sm:text-5xl font-bold">›</span>
+                class="absolute right-1 sm:right-0 top-1/2 transform -translate-y-1/2 sm:translate-x-16 text-white hover:text-gray-300 transition-colors bg-black/30 sm:bg-transparent rounded-full p-1">
+                <span class="text-2xl sm:text-5xl font-bold">›</span>
               </button>
 
               <!-- Image Counter -->
@@ -147,7 +147,7 @@ import Drift from 'drift-zoom';
           <div class="space-y-6">
             <!-- Title & Rating -->
             <div>
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product()?.name }}</h1>
+              <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ product()?.name }}</h1>
               <div class="flex items-center gap-4">
                 <div class="flex items-center gap-1">
                   <span class="text-yellow-400 text-lg">★</span>
@@ -160,7 +160,7 @@ import Drift from 'drift-zoom';
             <!-- Price Section -->
             <div class="bg-gradient-to-r from-rose-50 to-pink-50 p-6 rounded-lg">
               <div class="flex items-baseline gap-4 mb-4">
-                <span class="text-4xl font-bold text-rose-600">₹{{ product()?.price }}</span>
+                <span class="text-3xl sm:text-4xl font-bold text-rose-600">₹{{ product()?.price }}</span>
                 <span *ngIf="product()?.originalPrice && (product()?.originalPrice ?? 0) > (product()?.price ?? 0)" class="text-xl text-gray-500 line-through">
                   ₹{{ product()?.originalPrice }}
                 </span>
@@ -279,10 +279,10 @@ import Drift from 'drift-zoom';
                   <p class="text-rose-600 font-bold text-lg">₹{{ item.price }}</p>
                 </div>
 
-                <!-- Add to Cart Button (appears on hover) -->
+                <!-- Add to Cart Button (always visible on mobile/tablet, hover-reveal on desktop) -->
                 <button
                   (click)="addRelatedToCart(item, $event)"
-                  class="w-full bg-rose-500 text-white py-2 rounded-lg font-semibold hover:bg-rose-600 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
+                  class="w-full bg-rose-500 text-white py-2 rounded-lg font-semibold hover:bg-rose-600 transition-all duration-300 flex items-center justify-center gap-2 lg:opacity-0 lg:group-hover:opacity-100 lg:translate-y-2 lg:group-hover:translate-y-0">
                   <span>🛒</span>
                   <span>Add to Cart</span>
                 </button>
@@ -290,7 +290,7 @@ import Drift from 'drift-zoom';
                 <!-- View Details Link -->
                 <button
                   (click)="goToProduct(item.id)"
-                  class="w-full text-center text-rose-600 font-semibold text-sm hover:underline py-1 opacity-0 group-hover:opacity-100">
+                  class="w-full text-center text-rose-600 font-semibold text-sm hover:underline py-1 lg:opacity-0 lg:group-hover:opacity-100">
                   View Details →
                 </button>
               </div>

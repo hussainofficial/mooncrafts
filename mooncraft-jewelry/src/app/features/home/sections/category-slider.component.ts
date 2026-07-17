@@ -11,9 +11,9 @@ import { Category } from '../../../core/models';
     <section class="py-12 md:py-16 px-4 lg:px-8 bg-white">
       <div class="w-full max-w-7xl mx-auto">
         <!-- Title -->
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Shop by Category</h2>
-          <a href="#" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
+        <div class="flex items-center justify-between mb-6 sm:mb-8 gap-2">
+          <h2 class="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900">Shop by Category</h2>
+          <a href="#" class="text-rose-500 hover:text-rose-600 font-semibold text-sm sm:text-base whitespace-nowrap">View All →</a>
         </div>
 
         <!-- Horizontal Scroll Categories -->

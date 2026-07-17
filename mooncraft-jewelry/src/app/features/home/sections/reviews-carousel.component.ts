@@ -12,7 +12,7 @@ import { Review } from '../../../core/models';
       <div class="max-w-7xl mx-auto">
         <!-- Title -->
         <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">What Our Customers Say</h2>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">What Our Customers Say</h2>
           <p class="text-gray-600">Join thousands of happy customers</p>
         </div>
 

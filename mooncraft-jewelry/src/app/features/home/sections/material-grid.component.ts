@@ -12,7 +12,7 @@ import { MaterialService } from '../../../core/services/material.service';
       <div class="max-w-7xl mx-auto">
         <!-- Title -->
         <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Shop by Material</h2>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Shop by Material</h2>
         </div>
 
         <!-- Loading State -->

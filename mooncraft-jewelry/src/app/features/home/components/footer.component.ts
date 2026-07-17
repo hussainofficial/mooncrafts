@@ -19,7 +19,7 @@ interface FooterSection {
     <footer class="bg-gray-900 text-gray-300">
       <!-- Main Footer -->
       <div class="max-w-7xl mx-auto px-4 py-12">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 mb-8">
           <!-- About -->
           <div>
             <h3 class="text-white font-bold mb-4">MOONCRAFT</h3>

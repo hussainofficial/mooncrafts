@@ -136,7 +136,8 @@ class RazorpayController {
             'failed',
             {
               failureReason: error.message,
-              razorpayPaymentId: req.body.razorpayPaymentId
+              razorpayPaymentId: req.body.razorpayPaymentId,
+              gatewayName: 'razorpay'
             }
           );
         } catch (updateError) {
@@ -281,6 +282,7 @@ class RazorpayController {
 
       await paymentRepository.updatePaymentStatus(orderId, 'failed', {
         razorpayPaymentId: payment.id,
+        gatewayName: 'razorpay',
         failureReason: payment.error?.description || 'Payment failed'
       });
     } catch (error) {
