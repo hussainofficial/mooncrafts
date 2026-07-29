@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { MockDataService } from '../../../core/services/mock-data.service';
 import { Category } from '../../../core/models';
 
 @Component({
   selector: 'app-category-slider',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <section class="py-12 md:py-16 px-4 lg:px-8 bg-white">
       <div class="w-full max-w-7xl mx-auto">
         <!-- Title -->
         <div class="flex items-center justify-between mb-6 sm:mb-8 gap-2">
           <h2 class="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900">Shop by Category</h2>
-          <a href="#" class="text-rose-500 hover:text-rose-600 font-semibold text-sm sm:text-base whitespace-nowrap">View All →</a>
+          <a routerLink="/products" class="text-rose-500 hover:text-rose-600 font-semibold text-sm sm:text-base whitespace-nowrap">View All →</a>
         </div>
 
         <!-- Horizontal Scroll Categories -->
@@ -62,14 +63,16 @@ import { Category } from '../../../core/models';
 export class CategorySliderComponent implements OnInit {
   categories: Category[] = [];
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(
+    private mockDataService: MockDataService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.categories = this.mockDataService.getCategories();
   }
 
   onCategoryClick(category: Category) {
-    // TODO: Implement smooth scroll to category section
-    console.log('Category clicked:', category.slug);
+    this.router.navigate(['/products'], { queryParams: { category: category.slug } });
   }
 }

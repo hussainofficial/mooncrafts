@@ -39,7 +39,7 @@ import { Product } from '../../core/models';
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-xl sm:text-2xl font-bold text-rose-500">Shopping Cart</h1>
           <a href="/" class="px-4 sm:px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold text-sm sm:text-base">
-            ← Continue Shopping
+            ← Back to Shopping
           </a>
         </div>
       </div>
@@ -124,12 +124,8 @@ import { Product } from '../../core/models';
                 <span class="font-semibold">₹{{ getSubtotal() }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">Shipping</span>
+                <span class="text-gray-600">Shipping Charges</span>
                 <span class="font-semibold text-green-600">FREE</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Tax (18%)</span>
-                <span class="font-semibold">₹{{ getTax() }}</span>
               </div>
             </div>
 
@@ -147,7 +143,7 @@ import { Product } from '../../core/models';
             <a
               href="/"
               class="block w-full text-center px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold">
-              Continue Shopping
+              Back to Shopping
             </a>
           </div>
         </div>
@@ -212,12 +208,8 @@ export class CartComponent implements OnInit {
     }, 0);
   }
 
-  getTax(): number {
-    return Math.round(this.getSubtotal() * 0.18);
-  }
-
   getTotal(): number {
-    return this.getSubtotal() + this.getTax();
+    return this.getSubtotal();
   }
 
   checkout() {

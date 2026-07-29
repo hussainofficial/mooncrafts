@@ -115,7 +115,7 @@ import { HeaderComponent } from '../home/components/header.component';
           <button
             (click)="continueShopping()"
             class="w-full px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-colors text-lg">
-            Continue Shopping
+            Back to Shopping
           </button>
         </div>
 

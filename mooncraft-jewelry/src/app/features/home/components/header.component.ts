@@ -46,21 +46,8 @@ interface NavItem {
               <div *ngIf="item.showMegaMenu"
                 class="mega-menu absolute left-0 top-full z-50 opacity-0 invisible transition-all duration-300 bg-white shadow-2xl rounded-lg mt-0 w-max max-h-96 overflow-y-auto">
                 <div class="p-6">
-                  <div class="grid grid-cols-5 gap-6">
-                    <!-- Categories Column 1 - By Material (Dynamic) -->
-                    <div>
-                      <h3 class="font-bold text-gray-900 mb-3">By Material</h3>
-                      <ul class="space-y-2 text-sm text-gray-600">
-                        <li *ngFor="let cat of getMaterialCategories()">
-                          <a (click)="navigateToFragment(cat.slug)" class="hover:text-rose-500 cursor-pointer">{{ cat.name }}</a>
-                        </li>
-                      </ul>
-                      <p *ngIf="getMaterialCategories().length === 0" class="text-xs text-gray-400 italic mt-2">
-                        No categories added yet
-                      </p>
-                    </div>
-
-                    <!-- Categories Column 2 - By Type (Dynamic) -->
+                  <div class="grid grid-cols-4 gap-6">
+                    <!-- 1) By Type (Dynamic) -->
                     <div>
                       <h3 class="font-bold text-gray-900 mb-3">By Type</h3>
                       <ul class="space-y-2 text-sm text-gray-600">
@@ -73,18 +60,20 @@ interface NavItem {
                       </p>
                     </div>
 
-                    <!-- Categories Column 3 - Quick Links -->
+                    <!-- 2) By Material (Dynamic) -->
                     <div>
-                      <h3 class="font-bold text-gray-900 mb-3">Quick Links</h3>
+                      <h3 class="font-bold text-gray-900 mb-3">By Material</h3>
                       <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a (click)="navigateToFragment('trending')" class="hover:text-rose-500 cursor-pointer">Trending Now</a></li>
-                        <li><a (click)="navigateToFragment('new-arrivals')" class="hover:text-rose-500 cursor-pointer">New Arrivals</a></li>
-                        <li><a (click)="navigateToFragment('best-sellers')" class="hover:text-rose-500 cursor-pointer">Best Sellers</a></li>
-                        <li><a (click)="navigateToFragment('featured-products')" class="hover:text-rose-500 cursor-pointer">Featured</a></li>
+                        <li *ngFor="let cat of getMaterialCategories()">
+                          <a (click)="goToMaterial(cat.id)" class="hover:text-rose-500 cursor-pointer">{{ cat.name }}</a>
+                        </li>
                       </ul>
+                      <p *ngIf="getMaterialCategories().length === 0" class="text-xs text-gray-400 italic mt-2">
+                        No categories added yet
+                      </p>
                     </div>
 
-                    <!-- Column 4 - Featured Products Grid -->
+                    <!-- Featured Products Grid -->
                     <div>
                       <h3 class="font-bold text-gray-900 mb-3">✨ Featured</h3>
                       <div class="space-y-3">
@@ -103,12 +92,12 @@ interface NavItem {
                       </div>
                     </div>
 
-                    <!-- Column 5 - Browse All -->
+                    <!-- Browse All -->
                     <div class="bg-gradient-to-br from-rose-50 to-pink-50 rounded-lg p-4 text-center space-y-3 h-fit">
                       <div>
                         <h4 class="font-bold text-gray-900 mb-2">Browse All</h4>
                         <p class="text-sm text-gray-600 mb-3">Premium Jewelry<br>Collection</p>
-                        <a routerLink="/shop" class="inline-block bg-rose-500 text-white px-3 py-2 rounded text-xs font-semibold hover:bg-rose-600 transition-colors">
+                        <a routerLink="/products" class="inline-block bg-rose-500 text-white px-3 py-2 rounded text-xs font-semibold hover:bg-rose-600 transition-colors">
                           Shop All →
                         </a>
                       </div>
@@ -294,7 +283,7 @@ interface NavItem {
           <div *ngIf="cartService.getCartItems().length === 0" class="text-center py-8">
             <p class="text-gray-500">Your cart is empty</p>
             <button (click)="closeCartDrawer()" class="mt-4 bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600">
-              Continue Shopping
+              Back to Shopping
             </button>
           </div>
           <div *ngIf="cartService.getCartItems().length > 0" class="space-y-4">
@@ -319,7 +308,7 @@ interface NavItem {
                 Proceed to Checkout
               </button>
               <button (click)="closeCartDrawer()" class="w-full border border-gray-300 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-50">
-                Continue Shopping
+                Back to Shopping
               </button>
             </div>
           </div>
@@ -424,6 +413,10 @@ export class HeaderComponent {
 
   navigateToFragment(fragment: string) {
     this.router.navigate([], { fragment: fragment });
+  }
+
+  goToMaterial(materialId: number) {
+    this.router.navigate(['/products'], { queryParams: { material: materialId } });
   }
 
   getMaterialCategories() {

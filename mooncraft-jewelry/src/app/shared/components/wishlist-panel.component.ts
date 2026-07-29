@@ -43,7 +43,7 @@ import { Product } from '../../core/models';
           <button
             (click)="close()"
             class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold">
-            Continue Shopping
+            Back to Shopping
           </button>
         </div>
 
@@ -92,7 +92,7 @@ import { Product } from '../../core/models';
         <button
           (click)="close()"
           class="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold transition-colors">
-          Continue Shopping
+          Back to Shopping
         </button>
       </div>
     </div>

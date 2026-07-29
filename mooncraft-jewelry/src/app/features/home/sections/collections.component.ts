@@ -74,19 +74,10 @@ export class CollectionsComponent {
   }
 
   onCollectionClick(collection: any) {
-    console.log('Collection clicked:', collection.slug);
-    // Navigate to shop page
-    this.router.navigate(['/shop'], { queryParams: { collection: collection.slug } });
+    this.router.navigate(['/collections', collection.id]);
   }
 
   shopCollection(collection: any) {
-    console.log('Shopping collection:', collection.name);
-    // Navigate to shop with collection filter
-    this.router.navigate(['/shop'], {
-      queryParams: {
-        collection: collection.slug,
-        name: collection.name
-      }
-    });
+    this.router.navigate(['/collections', collection.id]);
   }
 }

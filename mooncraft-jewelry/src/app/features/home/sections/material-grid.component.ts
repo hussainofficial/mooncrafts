@@ -83,13 +83,8 @@ export class MaterialGridComponent {
   }
 
   onMaterialClick(material: any) {
-    console.log('Material clicked:', material.slug);
-    // Navigate to shop with material filter
-    this.router.navigate(['/shop'], {
-      queryParams: {
-        material: material.slug,
-        name: material.name
-      }
+    this.router.navigate(['/products'], {
+      queryParams: { material: material.id }
     });
   }
 }

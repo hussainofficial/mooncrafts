@@ -7,6 +7,7 @@ import { AdminRegisterComponent } from './features/auth/admin-register.component
 import { AdminDashboardComponent } from './features/admin/admin-dashboard.component';
 import { ProfileComponent } from './features/user/profile.component';
 import { ProductDetailsComponent } from './features/product/product-details.component';
+import { ProductsComponent } from './features/product/products.component';
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { PaymentComponent } from './features/checkout/payment.component';
@@ -24,6 +25,9 @@ export const routes: Routes = [
   // Public Routes (Accessible by everyone except admin users)
   { path: '', component: HomeComponent, canActivate: [PublicOnlyGuard] },
   { path: 'product/:id', component: ProductDetailsComponent, canActivate: [PublicOnlyGuard] },
+  { path: 'products', component: ProductsComponent, canActivate: [PublicOnlyGuard] },
+  { path: 'collections/:id', component: ProductsComponent, canActivate: [PublicOnlyGuard] },
+  { path: 'category/:categoryId', component: ProductsComponent, canActivate: [PublicOnlyGuard] },
   { path: 'cart', component: CartComponent, canActivate: [PublicOnlyGuard] },
   { path: 'checkout', component: CheckoutComponent, canActivate: [PublicOnlyGuard] },
   { path: 'payment', component: PaymentComponent, canActivate: [PublicOnlyGuard] },

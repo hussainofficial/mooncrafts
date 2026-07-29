@@ -14,6 +14,9 @@ export class CartService {
   private readonly STORAGE_KEY = 'mooncraft_cart';
   cartItems = signal<CartItem[]>([]);
   cartCount = signal(0);
+  lastAddedProduct = signal<Product | null>(null);
+  showAddedToast = signal(false);
+  private toastTimeout: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
     this.loadCart();
@@ -53,6 +56,23 @@ export class CartService {
 
     this.cartItems.set(items);
     this.saveCart();
+    this.triggerAddedToast(product);
+  }
+
+  private triggerAddedToast(product: Product) {
+    this.lastAddedProduct.set(product);
+    this.showAddedToast.set(true);
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
+    this.toastTimeout = setTimeout(() => this.showAddedToast.set(false), 4000);
+  }
+
+  dismissAddedToast() {
+    this.showAddedToast.set(false);
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
   }
 
   removeFromCart(productId: string) {

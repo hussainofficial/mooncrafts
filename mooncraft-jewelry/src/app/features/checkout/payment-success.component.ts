@@ -110,7 +110,7 @@ import { HeaderComponent } from '../home/components/header.component';
           <button
             (click)="continueShopping()"
             class="w-full px-6 py-3 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600 transition-colors text-lg">
-            Continue Shopping
+            Back to Shopping
           </button>
           <button
             (click)="viewOrders()"

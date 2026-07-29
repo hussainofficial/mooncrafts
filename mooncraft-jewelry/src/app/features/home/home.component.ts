@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, Signal, effect, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
 import { CartService } from '../../core/services/cart.service';
@@ -16,7 +16,6 @@ import { MaterialGridComponent } from './sections/material-grid.component';
 import { ReviewsCarouselComponent } from './sections/reviews-carousel.component';
 import { NewsletterComponent } from './sections/newsletter.component';
 import { ProductCarouselComponent } from '../../shared/components/product-carousel.component';
-import { ProductGridComponent } from '../../shared/components/product-grid.component';
 import { ProductDetailsPanelComponent } from '../../shared/components/product-details-panel.component';
 import { WishlistPanelComponent } from '../../shared/components/wishlist-panel.component';
 import { CartDrawerComponent } from '../../shared/components/cart-drawer.component';
@@ -29,6 +28,7 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    RouterLink,
     ScrollAnimateDirective,
     AnnouncementBarComponent,
     HeaderComponent,
@@ -41,7 +41,6 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
     ReviewsCarouselComponent,
     NewsletterComponent,
     ProductCarouselComponent,
-    ProductGridComponent,
     ProductDetailsPanelComponent,
     WishlistPanelComponent,
     CartDrawerComponent,
@@ -89,7 +88,7 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
           <div *ngIf="cartService.getCartItems().length === 0" class="text-center py-8">
             <p class="text-gray-500">Your cart is empty</p>
             <button (click)="closeCartDrawer()" class="mt-4 bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600">
-              Continue Shopping
+              Back to Shopping
             </button>
           </div>
 
@@ -122,7 +121,7 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
                 Proceed to Checkout
               </button>
               <button (click)="closeCartDrawer()" class="w-full border border-gray-300 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-50">
-                Continue Shopping
+                Back to Shopping
               </button>
             </div>
           </div>
@@ -156,7 +155,7 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
               <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Trending Now</h2>
               <p class="text-sm text-gray-600 mt-2">Most loved by our customers</p>
             </div>
-            <a href="#trending" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
+            <a [routerLink]="['/products']" [queryParams]="{ filter: 'trending' }" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
           </div>
           <app-product-carousel
             [products]="trendingProducts()"
@@ -178,12 +177,12 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
               <h2 class="text-3xl md:text-4xl font-bold text-gray-900">New Arrivals</h2>
               <p class="text-sm text-gray-600 mt-2">Latest additions to our collection</p>
             </div>
-            <a href="#new-arrivals" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
+            <a [routerLink]="['/products']" [queryParams]="{ filter: 'new-arrivals' }" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
           </div>
-          <app-product-grid
+          <app-product-carousel
             [products]="newArrivals()"
             (addToCart)="onAddToCart($event)"
-          ></app-product-grid>
+          ></app-product-carousel>
         </div>
       </section>
 
@@ -195,12 +194,12 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
               <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Best Sellers</h2>
               <p class="text-sm text-gray-600 mt-2">Customer favorites</p>
             </div>
-            <a href="#best-sellers" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
+            <a [routerLink]="['/products']" [queryParams]="{ filter: 'best-sellers' }" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
           </div>
-          <app-product-grid
+          <app-product-carousel
             [products]="bestSellers()"
             (addToCart)="onAddToCart($event)"
-          ></app-product-grid>
+          ></app-product-carousel>
         </div>
       </section>
 
@@ -212,12 +211,12 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
               <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Featured Products</h2>
               <p class="text-sm text-gray-600 mt-2">Handpicked for you</p>
             </div>
-            <a href="#featured-products" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
+            <a [routerLink]="['/products']" [queryParams]="{ filter: 'featured' }" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
           </div>
-          <app-product-grid
+          <app-product-carousel
             [products]="featuredProducts()"
             (addToCart)="onAddToCart($event)"
-          ></app-product-grid>
+          ></app-product-carousel>
         </div>
       </section>
 
@@ -234,12 +233,12 @@ import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.d
               <h2 class="text-3xl md:text-4xl font-bold text-gray-900">{{ category.name }}</h2>
               <p class="text-sm text-gray-600 mt-2">{{ category.description }}</p>
             </div>
-            <a [href]="'#' + category.slug" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
+            <a [routerLink]="['/category', category.id]" class="text-rose-500 hover:text-rose-600 font-semibold text-base">View All →</a>
           </div>
-          <app-product-grid
+          <app-product-carousel
             [products]="getProductsByCategory(category.slug)"
             (addToCart)="onAddToCart($event)"
-          ></app-product-grid>
+          ></app-product-carousel>
         </div>
       </section>
 
@@ -362,8 +361,6 @@ export class HomeComponent implements OnInit {
 
   onAddToCart(product: Product) {
     this.cartService.addToCart(product);
-    this.selectedProductForCart.set(product);
-    this.showAddToCartModal.set(true);
   }
 
   closeAddToCartModal() {

@@ -188,12 +188,8 @@ import { HeaderComponent } from '../home/components/header.component';
                 <span class="font-semibold">₹{{ getBreakdown().cartTotal }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">Tax (18%)</span>
-                <span class="font-semibold">₹{{ getBreakdown().tax }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Delivery</span>
-                <span class="font-semibold">₹{{ getBreakdown().deliveryCharge }}</span>
+                <span class="text-gray-600">Shipping Charges</span>
+                <span class="font-semibold">₹{{ getBreakdown().shippingCharges }}</span>
               </div>
               <div *ngIf="getBreakdown().discountAmount > 0" class="flex justify-between text-green-600">
                 <span>Discount</span>

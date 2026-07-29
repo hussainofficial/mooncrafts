@@ -153,11 +153,11 @@ import { Router } from '@angular/router';
           Proceed
         </button>
 
-        <!-- Continue Shopping Button -->
+        <!-- Back to Shopping Button -->
         <button
           (click)="continueShopping()"
           class="w-full border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:border-gray-400 hover:bg-gray-50 transition-colors">
-          Continue Shopping
+          Back to Shopping
         </button>
       </div>
     </div>

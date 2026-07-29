@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MockDataService } from '../../../core/services/mock-data.service';
 import { Banner } from '../../../core/models';
 
@@ -124,7 +125,10 @@ export class HeroBannerComponent implements OnInit {
   private autoSlideInterval: any;
   private isAutoSliding = true;
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(
+    private mockDataService: MockDataService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.banners = this.mockDataService.getBanners();
@@ -161,7 +165,14 @@ export class HeroBannerComponent implements OnInit {
   }
 
   onCtaClick(link: string) {
-    console.log('CTA clicked:', link);
+    if (!link || link === '#') {
+      return;
+    }
+    if (link.startsWith('#')) {
+      this.router.navigate(['/'], { fragment: link.substring(1) });
+    } else {
+      this.router.navigateByUrl(link);
+    }
   }
 
   private resetProgress() {

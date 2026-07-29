@@ -56,7 +56,7 @@ export class MockDataService {
         subtitle: 'Discover elegant jewelry that tells your story',
         image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1200&h=600&fit=crop',
         cta: 'Explore Now',
-        ctaLink: '#bridal-collection',
+        ctaLink: '#collections',
         order: 1,
       },
       {
@@ -65,7 +65,7 @@ export class MockDataService {
         subtitle: 'Premium jewelry for every occasion',
         image: 'https://images.unsplash.com/photo-1587599810487-e86aed5a6a5f?w=1200&h=600&fit=crop',
         cta: 'Shop Now',
-        ctaLink: '#featured',
+        ctaLink: '#featured-products',
         order: 2,
       },
       {

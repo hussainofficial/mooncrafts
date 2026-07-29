@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 interface FooterLink {
   label: string;
-  href: string;
+  route: string;
+  fragment?: string;
+  queryParams?: Record<string, string>;
 }
 
 interface FooterSection {
@@ -14,7 +17,7 @@ interface FooterSection {
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <footer class="bg-gray-900 text-gray-300">
       <!-- Main Footer -->
@@ -39,7 +42,11 @@ interface FooterSection {
             <h4 class="text-white font-semibold mb-4">{{ section.title }}</h4>
             <ul class="space-y-2 text-sm">
               <li *ngFor="let link of section.links">
-                <a [href]="link.href" class="hover:text-rose-400 transition-colors">
+                <a
+                  [routerLink]="link.route"
+                  [fragment]="link.fragment"
+                  [queryParams]="link.queryParams"
+                  class="hover:text-rose-400 transition-colors">
                   {{ link.label }}
                 </a>
               </li>
@@ -68,37 +75,37 @@ export class FooterComponent {
     {
       title: 'QUICK LINKS',
       links: [
-        { label: 'All Products', href: '#' },
-        { label: 'New Arrivals', href: '#' },
-        { label: 'Best Sellers', href: '#' },
-        { label: 'Sale', href: '#' },
+        { label: 'All Products', route: '/products' },
+        { label: 'New Arrivals', route: '/', fragment: 'new-arrivals' },
+        { label: 'Best Sellers', route: '/', fragment: 'best-sellers' },
+        { label: 'Sale', route: '/products' },
       ],
     },
     {
       title: 'COLLECTIONS',
       links: [
-        { label: 'Bridal Collection', href: '#' },
-        { label: 'Party Wear', href: '#' },
-        { label: 'Daily Wear', href: '#' },
-        { label: 'Office Wear', href: '#' },
+        { label: 'Bridal Collection', route: '/products', queryParams: { category: 'bridal-collection' } },
+        { label: 'Party Wear', route: '/products', queryParams: { category: 'party-wear' } },
+        { label: 'Daily Wear', route: '/products', queryParams: { category: 'daily-wear' } },
+        { label: 'Office Wear', route: '/products', queryParams: { category: 'office-wear' } },
       ],
     },
     {
       title: 'CUSTOMER SERVICE',
       links: [
-        { label: 'Track Order', href: '#' },
-        { label: 'Returns & Exchanges', href: '#' },
-        { label: 'Shipping Policy', href: '#' },
-        { label: 'Contact Us', href: '#' },
+        { label: 'Track Order', route: '/orders' },
+        { label: 'Returns & Exchanges', route: '/' },
+        { label: 'Shipping Policy', route: '/' },
+        { label: 'Contact Us', route: '/' },
       ],
     },
     {
       title: 'COMPANY',
       links: [
-        { label: 'About Us', href: '#' },
-        { label: 'Blog', href: '#' },
-        { label: 'Careers', href: '#' },
-        { label: 'Press', href: '#' },
+        { label: 'About Us', route: '/' },
+        { label: 'Blog', route: '/' },
+        { label: 'Careers', route: '/' },
+        { label: 'Press', route: '/' },
       ],
     },
   ];

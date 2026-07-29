@@ -170,14 +170,15 @@ export class CheckoutService {
     this.manualUPIId.set(upiId);
   }
 
+  // Catalog prices are tax-inclusive, so no separate tax line is added here.
+  // Shipping Charges is the only addition on top of the summed item display prices.
   getOrderTotal(): number {
     const cartTotal = this.cartService.cartItems().reduce((sum, item) => {
       return sum + item.product.price * item.quantity;
     }, 0);
 
-    const tax = Math.round(cartTotal * 0.18);
-    const deliveryCharge = this.selectedDeliveryMethod()?.price || 0;
-    const subtotal = cartTotal + tax + deliveryCharge;
+    const shippingCharges = this.selectedDeliveryMethod()?.price || 0;
+    const subtotal = cartTotal + shippingCharges;
     const discountAmount = Math.round(subtotal * (this.couponDiscount() / 100));
 
     return Math.max(0, subtotal - discountAmount);
@@ -188,15 +189,13 @@ export class CheckoutService {
       return sum + item.product.price * item.quantity;
     }, 0);
 
-    const tax = Math.round(cartTotal * 0.18);
-    const deliveryCharge = this.selectedDeliveryMethod()?.price || 0;
-    const subtotal = cartTotal + tax + deliveryCharge;
+    const shippingCharges = this.selectedDeliveryMethod()?.price || 0;
+    const subtotal = cartTotal + shippingCharges;
     const discountAmount = Math.round(subtotal * (this.couponDiscount() / 100));
 
     return {
       cartTotal,
-      tax,
-      deliveryCharge,
+      shippingCharges,
       subtotal,
       discountAmount,
       finalTotal: Math.max(0, subtotal - discountAmount),

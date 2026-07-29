@@ -18,7 +18,7 @@ import { HeaderComponent } from '../home/components/header.component';
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-xl sm:text-2xl font-bold text-gray-900">My Orders</h1>
           <a href="/" class="px-4 sm:px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold text-sm sm:text-base">
-            Continue Shopping
+            Back to Shopping
           </a>
         </div>
       </div>

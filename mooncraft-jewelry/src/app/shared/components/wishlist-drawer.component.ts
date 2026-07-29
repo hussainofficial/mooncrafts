@@ -113,7 +113,7 @@ import { Product } from '../../core/models';
           <button
             (click)="continueShopping()"
             class="px-6 py-2 bg-rose-500 text-white rounded-lg font-semibold hover:bg-rose-600 transition-colors">
-            Continue Shopping
+            Back to Shopping
           </button>
         </div>
       </div>
@@ -126,11 +126,11 @@ import { Product } from '../../core/models';
           <span class="text-2xl font-bold text-gray-900">{{ wishlistProducts.length }}</span>
         </div>
 
-        <!-- Continue Shopping Button -->
+        <!-- Back to Shopping Button -->
         <button
           (click)="continueShopping()"
           class="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-lg font-bold hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-md hover:shadow-lg">
-          Continue Shopping
+          Back to Shopping
         </button>
       </div>
     </div>
