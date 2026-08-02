@@ -4,11 +4,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { AuthService } from './auth.service';
 
-export interface CategoryAdmin {
+export interface MaterialAdmin {
   id: string;
   name: string;
   slug: string;
-  type: 'material' | 'type' | 'collection';
   description?: string;
   status: 'active' | 'inactive';
   createdAt?: string;
@@ -17,9 +16,9 @@ export interface CategoryAdmin {
 @Injectable({
   providedIn: 'root',
 })
-export class CategoryAdminService {
-  private readonly API_URL = `${environment.apiUrl}/categories`;
-  categories = signal<CategoryAdmin[]>([]);
+export class MaterialAdminService {
+  private readonly API_URL = `${environment.apiUrl}/materials`;
+  materials = signal<MaterialAdmin[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
 
@@ -42,104 +41,96 @@ export class CategoryAdminService {
     });
   }
 
-  fetchAllCategories(): void {
+  fetchAllMaterials(): void {
     this.loading.set(true);
     this.http.get<any>(`${this.API_URL}`, { headers: this.getHeaders() }).subscribe({
       next: (response) => {
-        console.log('✓ Categories fetched:', response);
-        const categories = (response.data || []).map((cat: any) => ({
-          id: cat.id?.toString() || '',
-          name: cat.name || '',
-          slug: cat.slug || '',
-          type: cat.type || 'type',
-          description: cat.description || '',
-          status: cat.is_active ? 'active' : 'inactive',
-          createdAt: cat.created_at
+        const materials = (response.data || []).map((mat: any) => ({
+          id: mat.id?.toString() || '',
+          name: mat.name || '',
+          slug: mat.slug || '',
+          description: mat.description || '',
+          status: mat.is_active ? 'active' : 'inactive',
+          createdAt: mat.created_at
         }));
-        this.categories.set(categories);
+        this.materials.set(materials);
         this.error.set(null);
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('✗ Failed to fetch categories:', error);
-        this.error.set('Failed to load categories');
+        console.error('✗ Failed to fetch materials:', error);
+        this.error.set('Failed to load materials');
         this.loading.set(false);
       }
     });
   }
 
-  getCategories(): CategoryAdmin[] {
-    return this.categories();
+  getMaterials(): MaterialAdmin[] {
+    return this.materials();
   }
 
-  getCategoryById(id: string): CategoryAdmin | undefined {
-    return this.categories().find(c => c.id === id);
+  getMaterialById(id: string): MaterialAdmin | undefined {
+    return this.materials().find(m => m.id === id);
   }
 
-  addCategory(category: Omit<CategoryAdmin, 'id' | 'createdAt'>): Promise<{ success: boolean; error?: string }> {
+  addMaterial(material: Omit<MaterialAdmin, 'id' | 'createdAt'>): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
       this.http.post<any>(`${this.API_URL}`, {
-        name: category.name,
-        slug: category.slug,
-        description: category.description,
-        type: category.type,
-        is_active: category.status === 'active'
+        name: material.name,
+        slug: material.slug,
+        description: material.description,
+        is_active: material.status === 'active'
       }, { headers: this.getHeaders() }).subscribe({
         next: () => {
-          this.fetchAllCategories();
+          this.fetchAllMaterials();
           resolve({ success: true });
         },
         error: (error) => {
-          console.error('Failed to add category:', error);
-          resolve({ success: false, error: this.extractErrorMessage(error, 'Failed to add category') });
+          console.error('Failed to add material:', error);
+          resolve({ success: false, error: this.extractErrorMessage(error, 'Failed to add material') });
         }
       });
     });
   }
 
-  updateCategory(id: string, updates: Partial<CategoryAdmin>): Promise<{ success: boolean; error?: string }> {
+  updateMaterial(id: string, updates: Partial<MaterialAdmin>): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
       const payload: any = {};
       if (updates.name !== undefined) payload.name = updates.name;
       if (updates.slug !== undefined) payload.slug = updates.slug;
       if (updates.description !== undefined) payload.description = updates.description;
-      if (updates.type !== undefined) payload.type = updates.type;
       if (updates.status !== undefined) payload.is_active = updates.status === 'active';
 
       this.http.put<any>(`${this.API_URL}/${id}`, payload, { headers: this.getHeaders() }).subscribe({
         next: () => {
-          this.fetchAllCategories();
+          this.fetchAllMaterials();
           resolve({ success: true });
         },
         error: (error) => {
-          console.error('Failed to update category:', error);
-          resolve({ success: false, error: this.extractErrorMessage(error, 'Failed to update category') });
+          console.error('Failed to update material:', error);
+          resolve({ success: false, error: this.extractErrorMessage(error, 'Failed to update material') });
         }
       });
     });
   }
 
-  deleteCategory(id: string): Promise<{ success: boolean; error?: string }> {
+  deleteMaterial(id: string): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
       this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() }).subscribe({
         next: () => {
-          this.fetchAllCategories();
+          this.fetchAllMaterials();
           resolve({ success: true });
         },
         error: (error) => {
-          console.error('Failed to delete category:', error);
-          resolve({ success: false, error: error.error?.message || 'Failed to delete category' });
+          console.error('Failed to delete material:', error);
+          resolve({ success: false, error: error.error?.message || 'Failed to delete material' });
         }
       });
     });
   }
 
-  searchCategories(query: string): CategoryAdmin[] {
+  searchMaterials(query: string): MaterialAdmin[] {
     const q = query.toLowerCase();
-    return this.categories().filter(
-      c =>
-        c.name.toLowerCase().includes(q) ||
-        c.type.toLowerCase().includes(q)
-    );
+    return this.materials().filter(m => m.name.toLowerCase().includes(q));
   }
 }

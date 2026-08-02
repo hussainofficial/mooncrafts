@@ -14,7 +14,7 @@ import { CartService } from '../../core/services/cart.service';
 
     <!-- Side Panel -->
     <div [class.translate-x-full]="!isOpen"
-      class="fixed right-0 top-0 h-full w-full md:w-[500px] bg-white shadow-2xl z-50 overflow-y-auto transition-transform duration-300">
+      class="fixed right-0 top-0 h-full w-full md:w-[500px] bg-white shadow-2xl z-50 translate-x-full overflow-y-auto transition-transform duration-300">
 
       <!-- Close Button -->
       <button (click)="close()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg z-10">

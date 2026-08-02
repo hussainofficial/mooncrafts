@@ -1,5 +1,42 @@
 const { validationResult } = require('express-validator');
 const productRepository = require('../repositories/product.repository');
+const instagramService = require('../services/instagram.service');
+const { saveDataUrlAsPublicFile, resolvePublicBaseUrl } = require('../utils/instagram-image.util');
+
+// Publishes a product to Instagram after it has already been saved to the DB.
+// Must never throw - a broken/expired Instagram token or unreachable image
+// should surface as a soft error, not roll back or fail the product save.
+async function publishProductToInstagram(req, product, instagramOptions) {
+  try {
+    const sourceImage = instagramOptions.imageOption === 'custom' && instagramOptions.customImage
+      ? instagramOptions.customImage
+      : product.image;
+
+    if (!sourceImage) {
+      throw new Error('No image available to publish to Instagram');
+    }
+
+    const publicPath = saveDataUrlAsPublicFile(sourceImage, `product-${product.id}`);
+    const imageUrl = `${resolvePublicBaseUrl(req)}${publicPath}`;
+    const caption = (instagramOptions.caption || '').slice(0, 2200);
+
+    const result = await instagramService.publishImage(imageUrl, caption);
+
+    await productRepository.updateInstagramStatus(product.id, {
+      isPublished: result.success,
+      postId: result.success ? result.postId : null
+    });
+
+    return result.success
+      ? { attempted: true, success: true, postId: result.postId }
+      : { attempted: true, success: false, error: result.error };
+  } catch (error) {
+    await productRepository
+      .updateInstagramStatus(product.id, { isPublished: false, postId: null })
+      .catch(() => {});
+    return { attempted: true, success: false, error: error.message };
+  }
+}
 
 // Helper function to convert image buffers to base64
 function convertImageToBase64(product) {
@@ -21,7 +58,7 @@ async function createProduct(req, res, next) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { name, description, price, category_id, material, material_id, stock, image, is_trending, is_new_arrival, is_best_seller, is_featured } = req.body;
+    const { name, description, price, category_id, material, material_id, stock, image, is_trending, is_new_arrival, is_best_seller, is_featured, instagram } = req.body;
     const categoryId = category_id || req.body.categoryId;
     const materialId = material_id || material || req.body.materialId;
 
@@ -65,11 +102,18 @@ async function createProduct(req, res, next) {
       createdProduct.image = `data:image/jpeg;base64,${createdProduct.image.toString('base64')}`;
     }
 
+    // Instagram publishing is best-effort and isolated from the product save above.
+    let instagramResult;
+    if (instagram && instagram.enabled) {
+      instagramResult = await publishProductToInstagram(req, createdProduct, instagram);
+    }
+
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
       productId,
-      data: createdProduct
+      data: createdProduct,
+      ...(instagramResult ? { instagram: instagramResult } : {})
     });
   } catch (error) {
     next(error);
@@ -137,7 +181,7 @@ async function updateProduct(req, res, next) {
     }
 
     const { productId } = req.params;
-    const { name, description, price, category_id, material, material_id, stock, status, image, is_trending, is_new_arrival, is_best_seller, is_featured } = req.body;
+    const { name, description, price, category_id, material, material_id, stock, status, image, is_trending, is_new_arrival, is_best_seller, is_featured, instagram } = req.body;
     const categoryId = category_id || req.body.categoryId; // Support both formats
     const materialId = material_id || material || req.body.materialId; // Support material_id, material, and materialId
 
@@ -216,10 +260,17 @@ async function updateProduct(req, res, next) {
       updatedProduct.image = `data:image/jpeg;base64,${updatedProduct.image.toString('base64')}`;
     }
 
+    // Instagram publishing is best-effort and isolated from the product save above.
+    let instagramResult;
+    if (instagram && instagram.enabled) {
+      instagramResult = await publishProductToInstagram(req, updatedProduct, instagram);
+    }
+
     res.json({
       success: true,
       message: 'Product updated successfully',
-      product: updatedProduct
+      product: updatedProduct,
+      ...(instagramResult ? { instagram: instagramResult } : {})
     });
   } catch (error) {
     next(error);

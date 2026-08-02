@@ -15,7 +15,7 @@ import { Product } from '../../core/models';
     <div *ngIf="isOpen" (click)="close()" class="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"></div>
 
     <!-- Wishlist Drawer -->
-    <div class="fixed right-0 top-0 h-screen z-50 transition-transform duration-300 bg-white shadow-2xl overflow-hidden flex flex-col"
+    <div class="fixed right-0 top-0 h-screen z-50 translate-x-full transition-transform duration-300 bg-white shadow-2xl overflow-hidden flex flex-col"
       [class.translate-x-full]="!isOpen"
       [ngClass]="{ 'w-full md:w-[480px]': true }">
 

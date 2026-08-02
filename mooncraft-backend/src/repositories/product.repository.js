@@ -401,6 +401,20 @@ class ProductRepository {
     }
   }
 
+  async updateInstagramStatus(productId, { isPublished, postId }) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        UPDATE products
+        SET is_instagram_published = ?, instagram_post_id = ?
+        WHERE id = ?
+      `;
+      await connection.execute(query, [isPublished ? 1 : 0, postId || null, productId]);
+    } finally {
+      connection.release();
+    }
+  }
+
   async deleteProductImages(productId) {
     const connection = await getConnection();
     try {

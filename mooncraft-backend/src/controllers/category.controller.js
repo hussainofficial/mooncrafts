@@ -12,13 +12,14 @@ async function createCategory(req, res, next) {
       });
     }
 
-    const { name, description, image, slug, type } = req.body;
+    const { name, description, image, slug, type, is_active } = req.body;
 
     const result = await categoryService.createCategory({
       name,
       slug,
       description,
-      type
+      type,
+      is_active
     });
 
     res.status(STATUS_CODES.CREATED).json({

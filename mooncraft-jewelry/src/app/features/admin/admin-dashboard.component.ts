@@ -10,6 +10,7 @@ import { CategoryService } from '../../core/services/category.service';
 import { LoaderService } from '../../core/services/loader.service';
 import { UserManagementService, User } from '../../core/services/user-management.service';
 import { CategoryAdminService, CategoryAdmin } from '../../core/services/category-admin.service';
+import { MaterialAdminService, MaterialAdmin } from '../../core/services/material-admin.service';
 import { OrderManagementService, Order } from '../../core/services/order-management.service';
 import { PaymentManagementService, Payment } from '../../core/services/payment-management.service';
 import { BlobImageService } from '../../core/services/blob-image.service';
@@ -139,6 +140,14 @@ import { Product } from '../../core/models';
             [class.bg-gray-200]="activeTab() !== 'categories'"
             class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Categories
+          </button>
+          <button
+            (click)="switchTab('materials')"
+            [class.bg-rose-500]="activeTab() === 'materials'"
+            [class.text-white]="activeTab() === 'materials'"
+            [class.bg-gray-200]="activeTab() !== 'materials'"
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
+            Materials
           </button>
           <button
             (click)="switchTab('users')"
@@ -560,6 +569,104 @@ import { Product } from '../../core/models';
               </div>
             </div>
 
+            <!-- Instagram Auto-Publish Settings -->
+            <div class="border border-purple-200 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                (click)="instagramPanelOpen.set(!instagramPanelOpen())"
+                class="w-full flex items-center justify-between px-6 py-4 bg-purple-50 hover:bg-purple-100 transition-colors">
+                <span class="text-sm font-semibold text-gray-900">📸 Instagram Settings</span>
+                <span class="text-gray-500">{{ instagramPanelOpen() ? '▲' : '▼' }}</span>
+              </button>
+
+              <div *ngIf="instagramPanelOpen()" class="p-6 space-y-4 bg-white border-t border-purple-100">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="productForm.shareToInstagram"
+                    name="shareToInstagram"
+                    (change)="onShareToInstagramChange()"
+                    class="w-5 h-5 text-purple-500 rounded focus:ring-2 focus:ring-purple-500">
+                  <span class="text-sm font-medium text-gray-900">Share this product to Instagram</span>
+                </label>
+
+                <div *ngIf="productForm.isInstagramPublished" class="text-xs text-green-700 bg-green-50 border border-green-200 rounded p-2">
+                  ✅ Already published to Instagram (Post ID: {{ productForm.instagramPostId }})
+                </div>
+
+                <div *ngIf="productForm.shareToInstagram" class="space-y-4 pl-1">
+                  <!-- Image Source -->
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Instagram Image</label>
+                    <div class="space-y-2">
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="instagramImageOption"
+                          value="primary"
+                          [(ngModel)]="productForm.instagramImageOption"
+                          (change)="onInstagramImageOptionChange()"
+                          class="w-4 h-4 text-purple-500">
+                        <span class="text-sm text-gray-800">Use Primary Product Photo</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="instagramImageOption"
+                          value="custom"
+                          [(ngModel)]="productForm.instagramImageOption"
+                          (change)="onInstagramImageOptionChange()"
+                          class="w-4 h-4 text-purple-500">
+                        <span class="text-sm text-gray-800">Upload Custom Instagram Graphic</span>
+                      </label>
+                    </div>
+
+                    <div
+                      *ngIf="productForm.instagramImageOption === 'custom'"
+                      class="mt-3 border-2 border-dashed border-purple-300 rounded-lg p-4 text-center cursor-pointer hover:border-purple-500 transition-colors"
+                      (click)="instagramFileInput.click()">
+                      <input
+                        #instagramFileInput
+                        type="file"
+                        accept="image/*"
+                        (change)="onInstagramImageSelected($event)"
+                        class="hidden">
+                      <p *ngIf="!productForm.instagramCustomImage" class="text-sm text-gray-600">Click to upload custom Instagram graphic</p>
+                      <img *ngIf="productForm.instagramCustomImage" [src]="productForm.instagramCustomImage" alt="Instagram graphic preview" class="max-h-40 mx-auto rounded">
+                    </div>
+
+                    <p *ngIf="instagramImageWarning()" class="mt-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2">
+                      ⚠️ {{ instagramImageWarning() }}
+                    </p>
+                  </div>
+
+                  <!-- Caption -->
+                  <div>
+                    <div class="flex items-center justify-between mb-2">
+                      <label class="block text-sm font-semibold text-gray-900">Caption</label>
+                      <button
+                        type="button"
+                        (click)="generateInstagramCaption()"
+                        class="text-xs text-purple-600 hover:underline font-semibold">
+                        Regenerate
+                      </button>
+                    </div>
+                    <textarea
+                      [(ngModel)]="productForm.instagramCaption"
+                      name="instagramCaption"
+                      rows="6"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                    <p
+                      class="mt-1 text-xs"
+                      [class.text-red-600]="productForm.instagramCaption.length > 2200"
+                      [class.text-gray-500]="productForm.instagramCaption.length <= 2200">
+                      {{ productForm.instagramCaption.length }} / 2200 characters
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Buttons -->
             <div class="flex gap-4 pt-8">
               <button
@@ -729,6 +836,142 @@ import { Product } from '../../core/models';
           <!-- Empty State -->
           <div *ngIf="getFilteredCategories().length === 0" class="text-center py-12 text-gray-500">
             <p class="text-lg">No categories found</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Materials Tab -->
+      <div *ngIf="activeTab() === 'materials'" class="space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">💎 Materials Management</h2>
+            <button
+              (click)="openAddMaterialForm()"
+              class="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
+              + Add Material
+            </button>
+          </div>
+
+          <!-- Search -->
+          <div class="mb-6">
+            <input
+              type="text"
+              [(ngModel)]="materialSearchQuery"
+              (ngModelChange)="performMaterialSearch()"
+              placeholder="Search materials by name..."
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
+          </div>
+
+          <!-- Add/Edit Material Form -->
+          <div *ngIf="showMaterialForm()" class="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              {{ editingMaterial() ? '✏️ Edit Material' : '➕ Add New Material' }}
+            </h3>
+            <form (ngSubmit)="saveMaterial()" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Material Name *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="materialForm.name"
+                    name="matName"
+                    placeholder="e.g., Gold"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Slug *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="materialForm.slug"
+                    name="matSlug"
+                    placeholder="e.g., gold"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Status *</label>
+                <select
+                  [(ngModel)]="materialForm.status"
+                  name="matStatus"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Description</label>
+                <textarea
+                  [(ngModel)]="materialForm.description"
+                  name="matDescription"
+                  placeholder="Material description..."
+                  rows="3"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"></textarea>
+              </div>
+              <div class="flex gap-4">
+                <button
+                  type="submit"
+                  class="flex-1 bg-rose-500 text-white py-2 rounded-lg font-semibold hover:bg-rose-600 transition-colors">
+                  {{ editingMaterial() ? 'Update' : 'Add' }} Material
+                </button>
+                <button
+                  type="button"
+                  (click)="cancelMaterialForm()"
+                  class="flex-1 bg-gray-300 text-gray-900 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Materials Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-100 border-b">
+                <tr>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">ID</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Slug</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Description</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let material of getFilteredMaterials()" class="border-b hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 text-sm text-gray-600">{{ material.id }}</td>
+                  <td class="px-6 py-4 font-semibold text-gray-900">{{ material.name }}</td>
+                  <td class="px-6 py-4 text-sm text-gray-600">{{ material.slug }}</td>
+                  <td class="px-6 py-4 text-sm text-gray-600">{{ material.description || '-' }}</td>
+                  <td class="px-6 py-4">
+                    <span [class.text-green-600]="material.status === 'active'"
+                          [class.text-red-600]="material.status === 'inactive'"
+                          class="font-semibold">
+                      {{ material.status === 'active' ? '✅ Active' : '❌ Inactive' }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 space-x-2">
+                    <button
+                      (click)="editMaterial(material)"
+                      class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm transition-colors">
+                      Edit
+                    </button>
+                    <button
+                      (click)="deleteMaterial(material.id)"
+                      class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm transition-colors">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="getFilteredMaterials().length === 0" class="text-center py-12 text-gray-500">
+            <p class="text-lg">No materials found</p>
           </div>
         </div>
       </div>
@@ -1242,7 +1485,7 @@ import { Product } from '../../core/models';
   `,
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
-  activeTab = signal<'products' | 'add' | 'categories' | 'users' | 'analytics' | 'orders' | 'payments'>('products');
+  activeTab = signal<'products' | 'add' | 'categories' | 'materials' | 'users' | 'analytics' | 'orders' | 'payments'>('products');
 
   // Message signals
   errorMessage = signal<string | null>(null);
@@ -1278,7 +1521,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     isNewArrival: false,
     isBestSeller: false,
     isFeatured: false,
+    // Instagram Settings
+    shareToInstagram: false,
+    instagramImageOption: 'primary' as 'primary' | 'custom',
+    instagramCustomImage: '',
+    instagramCaption: '',
+    isInstagramPublished: false,
+    instagramPostId: null as string | null,
   };
+
+  // Instagram Settings Signals
+  instagramPanelOpen = signal(false);
+  instagramImageWarning = signal<string | null>(null);
 
   // Category Management Signals
   showCategoryForm = signal(false);
@@ -1288,6 +1542,17 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     name: '',
     slug: '',
     type: '' as 'material' | 'type' | 'collection' | '',
+    description: '',
+    status: 'active' as 'active' | 'inactive',
+  };
+
+  // Material Management Signals
+  showMaterialForm = signal(false);
+  editingMaterial = signal<MaterialAdmin | null>(null);
+  materialSearchQuery = '';
+  materialForm = {
+    name: '',
+    slug: '',
     description: '',
     status: 'active' as 'active' | 'inactive',
   };
@@ -1348,6 +1613,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     public categoryService: CategoryService,
     public loaderService: LoaderService,
     public categoryAdminService: CategoryAdminService,
+    public materialAdminService: MaterialAdminService,
     public userManagementService: UserManagementService,
     public orderManagementService: OrderManagementService,
     public paymentManagementService: PaymentManagementService,
@@ -1366,6 +1632,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     this.loadProducts();
     this.loadCategories();
+    this.loadMaterials();
     this.loadUsers();
     this.loadOrders();
     this.loadPayments();
@@ -1420,7 +1687,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.currentPage.set(1);
   }
 
-  switchTab(tab: 'products' | 'add' | 'categories' | 'users' | 'analytics' | 'orders' | 'payments') {
+  switchTab(tab: 'products' | 'add' | 'categories' | 'materials' | 'users' | 'analytics' | 'orders' | 'payments') {
     this.activeTab.set(tab);
     this.resetProductForm();
   }
@@ -1531,10 +1798,123 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
 
+  // ===== INSTAGRAM SETTINGS =====
+
+  onShareToInstagramChange() {
+    if (this.productForm.shareToInstagram && !this.productForm.instagramCaption) {
+      this.generateInstagramCaption();
+    }
+  }
+
+  onInstagramImageOptionChange() {
+    this.instagramImageWarning.set(null);
+    if (this.productForm.instagramImageOption === 'primary' && this.productForm.image) {
+      this.checkInstagramImageAspectRatio(this.productForm.image);
+    } else if (this.productForm.instagramImageOption === 'custom' && this.productForm.instagramCustomImage) {
+      this.checkInstagramImageAspectRatio(this.productForm.instagramCustomImage);
+    }
+  }
+
+  onInstagramImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.productForm.instagramCustomImage = e.target?.result as string;
+      this.checkInstagramImageAspectRatio(this.productForm.instagramCustomImage);
+      this.cdr.markForCheck();
+    };
+    reader.onerror = () => {
+      this.showError('Failed to read Instagram graphic file');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  private checkInstagramImageAspectRatio(dataUrl: string) {
+    const img = new Image();
+    img.onload = () => {
+      const ratio = img.width / img.height;
+      const isSquare = Math.abs(ratio - 1) < 0.05;
+      const isVertical45 = Math.abs(ratio - 0.8) < 0.05;
+
+      if (!isSquare && !isVertical45) {
+        this.instagramImageWarning.set(
+          `Image is ${img.width}x${img.height} (ratio ${ratio.toFixed(2)}). Instagram recommends a 1:1 square or 4:5 vertical image - this may get cropped.`
+        );
+      } else {
+        this.instagramImageWarning.set(null);
+      }
+      this.cdr.markForCheck();
+    };
+    img.src = dataUrl;
+  }
+
+  generateInstagramCaption() {
+    const categoryId = (this.productForm as any).category;
+    const materialId = (this.productForm as any).material;
+
+    const categoryName = this.categoryAdminService.getCategories()
+      .find((c: any) => this.toString(c.id) === this.toString(categoryId))?.name || '';
+    const materialName = this.categoryService.getMaterials()
+      .find((m: any) => this.toString(m.id) === this.toString(materialId))?.name || '';
+
+    const productId = this.editingProduct()?.id;
+    const productLink = productId
+      ? `${environment.siteUrl}/product/${productId}`
+      : `${environment.siteUrl}/products`;
+
+    const hashtagCategory = categoryName.replace(/\s+/g, '');
+    const hashtagMaterial = materialName.replace(/\s+/g, '');
+
+    const caption =
+      `${this.productForm.name || 'New Product'}\n\n` +
+      `Available now for ₹${this.productForm.price || 0}!\n\n` +
+      `Shop here: ${productLink}\n\n` +
+      `#newarrival${hashtagCategory ? ' #' + hashtagCategory : ''}${hashtagMaterial ? ' #' + hashtagMaterial : ''}`;
+
+    this.productForm.instagramCaption = caption.slice(0, 2200);
+    this.cdr.markForCheck();
+  }
+
+  private buildInstagramPayload(): { enabled: boolean; imageOption: string; customImage: string | null; caption: string } | undefined {
+    if (!this.productForm.shareToInstagram) {
+      return undefined;
+    }
+    return {
+      enabled: true,
+      imageOption: this.productForm.instagramImageOption,
+      customImage: this.productForm.instagramImageOption === 'custom' ? this.productForm.instagramCustomImage : null,
+      caption: this.productForm.instagramCaption
+    };
+  }
+
+  private handleInstagramResult(instagramResult: any) {
+    if (!instagramResult) return;
+
+    if (instagramResult.success) {
+      this.showSuccess(`📸 Published to Instagram successfully! (Post ID: ${instagramResult.postId})`);
+    } else {
+      this.showError(`Product saved, but Instagram publish failed: ${instagramResult.error}`);
+    }
+  }
+
   async saveProduct() {
     if (!this.productForm.name || !this.productForm.description || !this.productForm.image || !this.productForm.category || !this.productForm.material || !this.productForm.price || this.productForm.stock === null || this.productForm.stock === undefined) {
       this.showError('❌ Please fill in ALL required fields:\n✓ Product Name\n✓ Description\n✓ Price\n✓ Category\n✓ Material\n✓ Stock Quantity\n✓ Product Image');
       return;
+    }
+
+    if (this.productForm.shareToInstagram) {
+      if (this.productForm.instagramCaption.length > 2200) {
+        this.showError('❌ Instagram caption must be under 2,200 characters');
+        return;
+      }
+      if (this.productForm.instagramImageOption === 'custom' && !this.productForm.instagramCustomImage) {
+        this.showError('❌ Please upload a custom Instagram graphic, or switch to the primary product photo');
+        return;
+      }
     }
 
     try {
@@ -1557,7 +1937,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           is_new_arrival: this.productForm.isNewArrival ? 1 : 0,
           is_best_seller: this.productForm.isBestSeller ? 1 : 0,
           is_featured: this.productForm.isFeatured ? 1 : 0,
-          status: 'active'
+          status: 'active',
+          instagram: this.buildInstagramPayload()
         };
 
         const result = await this.productService.updateProduct(this.editingProduct()!.id, updatePayload as any);
@@ -1576,6 +1957,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               this.showSuccess('✅ Product updated. Gallery image upload had issues.');
             }
           }
+
+          this.handleInstagramResult(result.instagram);
 
           this.loaderService.complete();
           await this.loadProducts();
@@ -1598,7 +1981,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           is_new_arrival: this.productForm.isNewArrival ? 1 : 0,
           is_best_seller: this.productForm.isBestSeller ? 1 : 0,
           is_featured: this.productForm.isFeatured ? 1 : 0,
-          status: 'active'
+          status: 'active',
+          instagram: this.buildInstagramPayload()
         };
 
         const result = await this.productService.addProduct(apiPayload as any);
@@ -1622,6 +2006,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           } else {
             this.showSuccess('✅ Product created successfully!');
           }
+
+          this.handleInstagramResult(result.instagram);
 
           this.loaderService.complete();
         } else {
@@ -1855,7 +2241,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       isNewArrival: false,
       isBestSeller: false,
       isFeatured: false,
+      shareToInstagram: false,
+      instagramImageOption: 'primary' as 'primary' | 'custom',
+      instagramCustomImage: '',
+      instagramCaption: '',
+      isInstagramPublished: false,
+      instagramPostId: null as string | null,
     };
+    this.instagramPanelOpen.set(false);
+    this.instagramImageWarning.set(null);
   }
 
   goToPage(page: number) {
@@ -1939,6 +2333,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.showCategoryForm.set(true);
   }
 
+  private slugify(value: string): string {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   async saveCategory() {
     if (!this.categoryForm.name || !this.categoryForm.slug || !this.categoryForm.type) {
       this.showError('Please fill in all required fields');
@@ -1951,7 +2354,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
       const categoryData = {
         name: this.categoryForm.name,
-        slug: this.categoryForm.slug,
+        slug: this.slugify(this.categoryForm.slug),
         type: this.categoryForm.type as 'material' | 'type' | 'collection',
         description: this.categoryForm.description,
         status: this.categoryForm.status,
@@ -2006,6 +2409,133 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         console.error('Error deleting category:', error);
         this.loaderService.hide();
         this.showError('Error deleting category');
+      }
+    }
+  }
+
+  // ===== MATERIAL MANAGEMENT =====
+  loadMaterials() {
+    console.log('LoadMaterials called');
+    this.materialAdminService.fetchAllMaterials();
+    setTimeout(() => {
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  getFilteredMaterials(): MaterialAdmin[] {
+    const query = this.materialSearchQuery.toLowerCase();
+    const materials = this.materialAdminService.getMaterials();
+
+    if (!query) {
+      return materials;
+    }
+
+    return materials.filter(m => m.name.toLowerCase().includes(query));
+  }
+
+  performMaterialSearch() {
+    // Search is done via computed signal
+  }
+
+  openAddMaterialForm() {
+    this.editingMaterial.set(null);
+    this.materialForm = {
+      name: '',
+      slug: '',
+      description: '',
+      status: 'active',
+    };
+    this.showMaterialForm.set(true);
+  }
+
+  cancelMaterialForm() {
+    this.showMaterialForm.set(false);
+    this.editingMaterial.set(null);
+    this.materialForm = {
+      name: '',
+      slug: '',
+      description: '',
+      status: 'active',
+    };
+  }
+
+  editMaterial(material: MaterialAdmin) {
+    this.editingMaterial.set(material);
+    this.materialForm = {
+      name: material.name,
+      slug: material.slug,
+      description: material.description || '',
+      status: material.status,
+    };
+    this.showMaterialForm.set(true);
+  }
+
+  async saveMaterial() {
+    if (!this.materialForm.name || !this.materialForm.slug) {
+      this.showError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const isUpdate = !!this.editingMaterial();
+      this.loaderService.show(isUpdate ? 'Updating material...' : 'Creating material...', true);
+
+      const materialData = {
+        name: this.materialForm.name,
+        slug: this.slugify(this.materialForm.slug),
+        description: this.materialForm.description,
+        status: this.materialForm.status,
+      };
+
+      if (isUpdate) {
+        const result = await this.materialAdminService.updateMaterial(this.editingMaterial()!.id, materialData);
+        if (result.success) {
+          this.showSuccess('Material updated successfully');
+        } else {
+          this.loaderService.hide();
+          this.showError(`Failed to update material: ${result.error}`);
+          return;
+        }
+      } else {
+        const result = await this.materialAdminService.addMaterial(materialData);
+        if (result.success) {
+          this.showSuccess('Material added successfully');
+        } else {
+          this.loaderService.hide();
+          this.showError(`Failed to add material: ${result.error}`);
+          return;
+        }
+      }
+
+      this.loaderService.complete();
+      this.cancelMaterialForm();
+      this.loadMaterials();
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Error saving material:', error);
+      this.loaderService.hide();
+      this.showError('Error saving material');
+    }
+  }
+
+  async deleteMaterial(id: string) {
+    if (confirm('Are you sure you want to delete this material?')) {
+      try {
+        this.loaderService.show('Deleting material...', true);
+        const result = await this.materialAdminService.deleteMaterial(id);
+        if (result.success) {
+          this.loaderService.complete();
+          this.showSuccess('Material deleted successfully');
+          this.loadMaterials();
+          this.cdr.markForCheck();
+        } else {
+          this.loaderService.hide();
+          this.showError(`Failed to delete material: ${result.error}`);
+        }
+      } catch (error) {
+        console.error('Error deleting material:', error);
+        this.loaderService.hide();
+        this.showError('Error deleting material');
       }
     }
   }

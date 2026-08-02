@@ -3,7 +3,7 @@ const categoryRepository = require('../repositories/category.repository');
 class CategoryService {
   // Create category
   async createCategory(data) {
-    const { name, slug, description, type } = data;
+    const { name, slug, description, type, is_active } = data;
 
     if (!name || name.trim().length < 2) {
       throw new Error('Category name must be at least 2 characters long');
@@ -22,7 +22,13 @@ class CategoryService {
       throw new Error('Slug already exists');
     }
 
-    const categoryId = await categoryRepository.createCategory(name, slug, description || '', type);
+    const categoryId = await categoryRepository.createCategory(
+      name,
+      slug,
+      description || '',
+      type,
+      is_active !== undefined ? is_active : true
+    );
     return { categoryId, message: 'Category created successfully' };
   }
 

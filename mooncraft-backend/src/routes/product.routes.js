@@ -43,7 +43,9 @@ router.post(
     body('categoryId').isInt(),
     body('materialId').optional().isInt(),
     body('image').optional().isString(),
-    body('stock').isInt({ min: 0 })
+    body('stock').isInt({ min: 0 }),
+    body('instagram').optional().isObject(),
+    body('instagram.caption').optional().isString().isLength({ max: 2200 })
   ],
   productController.createProduct
 );
@@ -60,7 +62,9 @@ router.put(
     body('categoryId').optional().isInt(),
     body('image').optional().isString(),
     body('stock').optional().isInt({ min: 0 }),
-    body('status').optional().trim()
+    body('status').optional().trim(),
+    body('instagram').optional().isObject(),
+    body('instagram.caption').optional().isString().isLength({ max: 2200 })
   ],
   productController.updateProduct
 );

@@ -40,7 +40,8 @@ router.post(
     body('name').notEmpty().isLength({ min: 2 }),
     body('slug').notEmpty().isSlug(),
     body('description').optional(),
-    body('type').isIn(['material', 'type', 'collection'])
+    body('type').isIn(['material', 'type', 'collection']),
+    body('is_active').optional().isBoolean()
   ],
   categoryController.createCategory
 );

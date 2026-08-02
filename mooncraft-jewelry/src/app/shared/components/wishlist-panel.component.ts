@@ -20,7 +20,7 @@ import { Product } from '../../core/models';
 
     <!-- Side Panel -->
     <div
-      class="fixed right-0 top-0 h-screen w-96 bg-white shadow-2xl z-40 flex flex-col transition-transform duration-300"
+      class="fixed right-0 top-0 h-screen w-96 bg-white shadow-2xl z-40 flex flex-col translate-x-full transition-transform duration-300"
       [class.translate-x-full]="!isOpen">
 
       <!-- Header -->

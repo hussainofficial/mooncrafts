@@ -85,7 +85,9 @@ export class ProductService {
       isBestSeller: data.is_best_seller || data.isBestSeller || false,
       // Store category and material IDs for form binding
       categoryId: data.category_id,
-      materialId: data.material_id
+      materialId: data.material_id,
+      isInstagramPublished: data.is_instagram_published === 1 || data.is_instagram_published === true,
+      instagramPostId: data.instagram_post_id || null
     } as any;
   }
 
@@ -180,7 +182,7 @@ export class ProductService {
     }
   }
 
-  async addProduct(product: any): Promise<{ success: boolean; error?: string }> {
+  async addProduct(product: any): Promise<{ success: boolean; error?: string; instagram?: any }> {
     return new Promise((resolve) => {
       // Use the payload as-is (already formatted from frontend)
       const payload = {
@@ -195,15 +197,16 @@ export class ProductService {
         is_new_arrival: product.is_new_arrival !== undefined ? product.is_new_arrival : (product.isNewArrival ? 1 : 0),
         is_best_seller: product.is_best_seller !== undefined ? product.is_best_seller : (product.isBestSeller ? 1 : 0),
         is_featured: product.is_featured !== undefined ? product.is_featured : (product.isFeatured ? 1 : 0),
-        status: product.status || 'active'
+        status: product.status || 'active',
+        ...(product.instagram ? { instagram: product.instagram } : {})
       };
 
       console.log('📤 ProductService sending payload:', payload);
 
       this.http.post<any>(`${this.API_URL}`, payload, { headers: this.getHeaders() }).subscribe({
-        next: async () => {
+        next: async (response) => {
           await this.fetchAllProducts();
-          resolve({ success: true });
+          resolve({ success: true, instagram: response?.instagram });
         },
         error: (error) => {
           console.error('Failed to add product:', error);
@@ -213,7 +216,7 @@ export class ProductService {
     });
   }
 
-  async updateProduct(id: string, updates: any): Promise<{ success: boolean; error?: string }> {
+  async updateProduct(id: string, updates: any): Promise<{ success: boolean; error?: string; instagram?: any }> {
     return new Promise((resolve) => {
       // Use the payload as-is (already formatted from frontend)
       const payload = {
@@ -228,17 +231,18 @@ export class ProductService {
         is_trending: updates.is_trending !== undefined ? updates.is_trending : (updates.isTrending ? 1 : 0),
         is_new_arrival: updates.is_new_arrival !== undefined ? updates.is_new_arrival : (updates.isNewArrival ? 1 : 0),
         is_best_seller: updates.is_best_seller !== undefined ? updates.is_best_seller : (updates.isBestSeller ? 1 : 0),
-        is_featured: updates.is_featured !== undefined ? updates.is_featured : (updates.isFeatured ? 1 : 0)
+        is_featured: updates.is_featured !== undefined ? updates.is_featured : (updates.isFeatured ? 1 : 0),
+        ...(updates.instagram ? { instagram: updates.instagram } : {})
       };
 
       console.log('📤 ProductService UPDATE payload:', payload);
 
       this.http.put<any>(`${this.API_URL}/${id}`, payload, { headers: this.getHeaders() }).subscribe({
-        next: async () => {
+        next: async (response) => {
           console.log('✅ Product update successful, refreshing list...');
           await this.fetchAllProducts();
           console.log('✅ Product list refreshed, resolving...');
-          resolve({ success: true });
+          resolve({ success: true, instagram: response?.instagram });
         },
         error: (error) => {
           console.error('Failed to update product:', error);
