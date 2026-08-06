@@ -25,6 +25,23 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+const optionalAuthMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.substring(7);
+
+  try {
+    req.user = verifyAccessToken(token);
+  } catch (error) {
+    // Invalid/expired token on an optional-auth route: proceed as guest instead of rejecting.
+  }
+  next();
+};
+
 const adminMiddleware = (req, res, next) => {
   if (!req.user) {
     return res.status(STATUS_CODES.UNAUTHORIZED).json({
@@ -43,4 +60,4 @@ const adminMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = { authMiddleware, adminMiddleware };
+module.exports = { authMiddleware, optionalAuthMiddleware, adminMiddleware };

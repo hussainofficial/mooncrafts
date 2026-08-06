@@ -11,7 +11,7 @@ import { Banner } from '../../../core/models';
   template: `
     <div class="relative w-full bg-white">
       <!-- Main Carousel -->
-      <div class="relative h-96 sm:h-[450px] md:h-[550px] lg:h-[600px] overflow-hidden rounded-3xl mx-3 sm:mx-4 lg:mx-6 mt-3 sm:mt-4">
+      <div class="relative h-[240px] sm:h-[280px] md:h-[350px] lg:h-[420px] min-[1440px]:h-[480px] overflow-hidden rounded-3xl mx-3 sm:mx-4 lg:mx-6 mt-3 sm:mt-4">
         <!-- Background Slides with Zoom Effect -->
         <div class="relative w-full h-full" (mouseenter)="pauseSlide()" (mouseleave)="resumeSlide()">
           <div
@@ -22,7 +22,7 @@ import { Banner } from '../../../core/models';
             <img
               [src]="banner.image"
               [alt]="banner.title"
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover object-center"
             />
             <!-- Gradient Overlay -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
@@ -77,30 +77,30 @@ import { Banner } from '../../../core/models';
         </button>
       </div>
 
-      <!-- Thumbnail Preview Below -->
-      <div class="px-4 md:px-8 py-8">
-        <div class="flex gap-3 overflow-x-auto pb-4 scroll-smooth">
-          <button
-            *ngFor="let banner of banners; let i = index"
-            (click)="goToSlide(i)"
-            class="flex-shrink-0 relative h-20 w-32 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 group"
-            [ngClass]="i === currentSlide() ? 'ring-2 ring-rose-500 scale-105' : 'hover:scale-110 opacity-70 hover:opacity-100'"
-          >
-            <img
-              [src]="banner.image"
-              [alt]="banner.title"
-              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div
-              *ngIf="i === currentSlide()"
-              class="absolute inset-0 bg-gradient-to-r from-rose-500/50 to-transparent"
-            ></div>
-          </button>
+      <!-- Thumbnail Preview Below 
+        <div class="px-4 md:px-8 py-8">
+          <div class="flex gap-3 overflow-x-auto pb-4 scroll-smooth">
+            <button
+              *ngFor="let banner of banners; let i = index"
+              (click)="goToSlide(i)"
+              class="flex-shrink-0 relative h-20 w-32 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 group"
+              [ngClass]="i === currentSlide() ? 'ring-2 ring-rose-500 scale-105' : 'hover:scale-110 opacity-70 hover:opacity-100'"
+            >
+              <img
+                [src]="banner.image"
+                [alt]="banner.title"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div
+                *ngIf="i === currentSlide()"
+                class="absolute inset-0 bg-gradient-to-r from-rose-500/50 to-transparent"
+              ></div>
+            </button>
+          </div>
         </div>
-      </div>
-
+       -->
       <!-- Dot Navigation -->
-      <div class="flex justify-center gap-2 pb-6">
+      <div class="flex justify-center gap-2 pb-3 pt-3">
         <button
           *ngFor="let banner of banners; let i = index"
           (click)="goToSlide(i)"

@@ -52,7 +52,7 @@ interface NavItem {
                       <h3 class="font-bold text-gray-900 mb-3">By Type</h3>
                       <ul class="space-y-2 text-sm text-gray-600">
                         <li *ngFor="let cat of getTypeCategories()">
-                          <a (click)="navigateToFragment(cat.slug)" class="hover:text-rose-500 cursor-pointer">{{ cat.name }}</a>
+                          <a (click)="goToCategory(cat.slug); $event.preventDefault(); $event.stopPropagation()" class="hover:text-rose-500 cursor-pointer">{{ cat.name }}</a>
                         </li>
                       </ul>
                       <p *ngIf="getTypeCategories().length === 0" class="text-xs text-gray-400 italic mt-2">
@@ -65,7 +65,7 @@ interface NavItem {
                       <h3 class="font-bold text-gray-900 mb-3">By Material</h3>
                       <ul class="space-y-2 text-sm text-gray-600">
                         <li *ngFor="let cat of getMaterialCategories()">
-                          <a (click)="goToMaterial(cat.id)" class="hover:text-rose-500 cursor-pointer">{{ cat.name }}</a>
+                          <a (click)="goToMaterial(cat.id); $event.preventDefault(); $event.stopPropagation()" class="hover:text-rose-500 cursor-pointer">{{ cat.name }}</a>
                         </li>
                       </ul>
                       <p *ngIf="getMaterialCategories().length === 0" class="text-xs text-gray-400 italic mt-2">
@@ -75,7 +75,7 @@ interface NavItem {
 
                     <!-- Featured Products Grid -->
                     <div>
-                      <h3 class="font-bold text-gray-900 mb-3">✨ Featured</h3>
+                      <h3 class="font-bold text-gray-900 mb-3">✨ Coming Soon</h3>
                       <div class="space-y-3">
                         <div *ngFor="let product of getFeaturedProductsForMenu()"
                           (click)="goToProduct(product.id)"
@@ -87,7 +87,7 @@ interface NavItem {
                           </div>
                         </div>
                         <p *ngIf="getFeaturedProductsForMenu().length === 0" class="text-xs text-gray-400 italic">
-                          No featured products yet
+                          No coming soon products yet
                         </p>
                       </div>
                     </div>
@@ -216,14 +216,67 @@ interface NavItem {
 
         <!-- Mobile Navigation Menu -->
         <div *ngIf="showMobileMenu()" class="lg:hidden bg-white border-t border-gray-200 py-4 space-y-2">
-          <a
-            *ngFor="let item of navItems"
-            [routerLink]="item.isRouterLink ? item.href : '/'"
-            [fragment]="item.isRouterLink ? undefined : item.href.substring(1)"
-            (click)="showMobileMenu.set(false)"
-            class="block px-4 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 font-medium transition-colors text-sm">
-            {{ item.label }}
-          </a>
+          <ng-container *ngFor="let item of navItems">
+            <!-- Plain nav items -->
+            <a
+              *ngIf="!item.showMegaMenu"
+              [routerLink]="item.isRouterLink ? item.href : '/'"
+              [fragment]="item.isRouterLink ? undefined : item.href.substring(1)"
+              (click)="showMobileMenu.set(false)"
+              class="min-h-[44px] flex items-center px-4 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 font-medium transition-colors text-sm">
+              {{ item.label }}
+            </a>
+
+            <!-- Products: accordion toggle with By Type / By Material -->
+            <ng-container *ngIf="item.showMegaMenu">
+              <button
+                (click)="showMobileProductsMenu.update(v => !v)"
+                class="w-full min-h-[44px] flex items-center justify-between px-4 py-2 text-gray-700 hover:text-rose-500 hover:bg-gray-50 font-medium transition-colors text-sm">
+                <span>{{ item.label }}</span>
+                <svg
+                  class="w-4 h-4 transition-transform duration-200"
+                  [class.rotate-180]="showMobileProductsMenu()"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+
+              <div *ngIf="showMobileProductsMenu()" class="bg-gray-50 px-4 py-3 space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                  <h4 class="font-semibold text-gray-900 text-xs uppercase tracking-wide mb-1">By Type</h4>
+                  <a
+                    *ngFor="let cat of getTypeCategories()"
+                    (click)="goToCategory(cat.slug); $event.preventDefault(); $event.stopPropagation(); showMobileMenu.set(false); showMobileProductsMenu.set(false)"
+                    class="min-h-[44px] flex items-center px-2 text-sm text-gray-600 hover:text-rose-500 cursor-pointer">
+                    {{ cat.name }}
+                  </a>
+                  <p *ngIf="getTypeCategories().length === 0" class="text-xs text-gray-400 italic px-2 py-2">
+                    No categories added yet
+                  </p>
+                </div>
+
+                <div>
+                  <h4 class="font-semibold text-gray-900 text-xs uppercase tracking-wide mb-1">By Material</h4>
+                  <a
+                    *ngFor="let cat of getMaterialCategories()"
+                    (click)="goToMaterial(cat.id); $event.preventDefault(); $event.stopPropagation(); showMobileMenu.set(false); showMobileProductsMenu.set(false)"
+                    class="min-h-[44px] flex items-center px-2 text-sm text-gray-600 hover:text-rose-500 cursor-pointer">
+                    {{ cat.name }}
+                  </a>
+                  <p *ngIf="getMaterialCategories().length === 0" class="text-xs text-gray-400 italic px-2 py-2">
+                    No categories added yet
+                  </p>
+                </div>
+
+                <a
+                  routerLink="/products"
+                  (click)="showMobileMenu.set(false); showMobileProductsMenu.set(false)"
+                  class="min-h-[44px] flex items-center justify-center bg-rose-500 text-white px-3 rounded text-xs font-semibold hover:bg-rose-600 transition-colors">
+                  Shop All →
+                </a>
+              </div>
+            </ng-container>
+          </ng-container>
 
           <!-- Mobile Auth Buttons -->
           <div *ngIf="!(authService.isLoggedIn() || userService.currentUserProfile())" class="sm:hidden border-t border-gray-200 pt-3 mt-3 px-4 space-y-2">
@@ -369,7 +422,7 @@ export class HeaderComponent {
     { label: 'Collections', href: '#collections' },
     { label: 'New Arrivals', href: '#new-arrivals' },
     { label: 'Best Sellers', href: '#best-sellers' },
-    { label: 'Featured', href: '#featured-products' },
+    { label: 'Coming Soon', href: '#featured-products' },
     { label: 'Reviews', href: '#reviews' },
   ];
 
@@ -377,6 +430,7 @@ export class HeaderComponent {
   showCartDrawer = signal(false);
   showWishlistDrawer = signal(false);
   showMobileMenu = signal(false);
+  showMobileProductsMenu = signal(false);
 
   constructor(
     public cartService: CartService,
@@ -411,8 +465,8 @@ export class HeaderComponent {
     // This allows smooth scroll to section without menu staying open
   }
 
-  navigateToFragment(fragment: string) {
-    this.router.navigate([], { fragment: fragment });
+  goToCategory(slug: string) {
+    this.router.navigate(['/products'], { queryParams: { category: slug } });
   }
 
   goToMaterial(materialId: number) {

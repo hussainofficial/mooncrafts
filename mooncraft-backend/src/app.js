@@ -18,6 +18,8 @@ const analyticsRoutes = require('./routes/analytics.routes');
 const materialRoutes = require('./routes/material.routes');
 const collectionRoutes = require('./routes/collection.routes');
 const productFlagsRoutes = require('./routes/product-flags.routes');
+const reviewRoutes = require('./routes/review.routes');
+const wishlistRoutes = require('./routes/wishlist.routes');
 const errorHandler = require('./middleware/error.middleware');
 
 const app = express();
@@ -48,6 +50,8 @@ app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/materials', materialRoutes);
 app.use('/api/v1/collections', collectionRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
+app.use('/api/v1/wishlist', wishlistRoutes);
 app.use('/api/v1/product-flags', productFlagsRoutes);
 
 // Health check endpoint

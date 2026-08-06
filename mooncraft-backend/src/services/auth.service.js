@@ -1,8 +1,12 @@
 const userRepository = require('../repositories/user.repository');
 const { hashPassword, comparePassword } = require('../utils/hash');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwt');
+const { sendPasswordResetEmail } = require('../utils/email');
 const { MESSAGES } = require('../../config/constants');
 const crypto = require('crypto');
+
+const RESET_TOKEN_EXPIRY_MS = 15 * 60 * 1000;
+const GENERIC_RESET_MESSAGE = 'If that email is registered, a password reset link has been sent.';
 
 class AuthService {
   async register(email, password, name, phone) {
@@ -83,6 +87,41 @@ class AuthService {
       throw new Error(MESSAGES.USER_NOT_FOUND);
     }
     return user;
+  }
+
+  async forgotPassword(email) {
+    const user = await userRepository.getUserByEmail(email);
+
+    // Anti-enumeration: always behave the same whether or not the user exists.
+    if (!user) {
+      return { message: GENERIC_RESET_MESSAGE };
+    }
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_EXPIRY_MS);
+
+    await userRepository.setPasswordResetToken(user.id, hashedToken, expiresAt);
+
+    const clientUrl = process.env.CLIENT_URL || process.env.CORS_ORIGIN || 'http://localhost:4200';
+    const resetUrl = `${clientUrl}/reset-password?token=${rawToken}`;
+    await sendPasswordResetEmail(user.email, resetUrl);
+
+    return { message: GENERIC_RESET_MESSAGE };
+  }
+
+  async resetPassword(token, newPassword) {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await userRepository.findByResetToken(hashedToken);
+
+    if (!user) {
+      throw new Error('Invalid or expired password reset token.');
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+    await userRepository.resetPassword(user.id, passwordHash);
+
+    return { message: 'Password has been reset successfully.' };
   }
 }
 

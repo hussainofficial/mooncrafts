@@ -94,18 +94,18 @@ export class FooterComponent {
       title: 'CUSTOMER SERVICE',
       links: [
         { label: 'Track Order', route: '/orders' },
-        { label: 'Returns & Exchanges', route: '/' },
+        // { label: 'Returns & Exchanges', route: '/' },
         { label: 'Shipping Policy', route: '/' },
-        { label: 'Contact Us', route: '/' },
+        { label: 'Contact Us', route: '/', fragment: 'contact' },
       ],
     },
     {
       title: 'COMPANY',
       links: [
-        { label: 'About Us', route: '/' },
-        { label: 'Blog', route: '/' },
-        { label: 'Careers', route: '/' },
-        { label: 'Press', route: '/' },
+        { label: 'About Us', route: '/', fragment: 'about' },
+        // { label: 'Blog', route: '/' },
+        // { label: 'Careers', route: '/' },
+        // { label: 'Press', route: '/' },
       ],
     },
   ];

@@ -5,7 +5,7 @@ class AddressController {
   // Get user addresses
   async getUserAddresses(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const addresses = await addressRepository.getUserAddresses(userId);
 
       res.status(STATUS_CODES.OK).json({
@@ -21,7 +21,7 @@ class AddressController {
   // Create address
   async createAddress(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const { fullName, email, phone, streetAddress, cityId, stateId, postalCode, country } = req.body;
 
       // Validate required fields
@@ -52,7 +52,7 @@ class AddressController {
   async getAddressById(req, res, next) {
     try {
       const { addressId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const address = await addressRepository.getAddressById(addressId);
 
@@ -85,7 +85,7 @@ class AddressController {
   async updateAddress(req, res, next) {
     try {
       const { addressId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const { fullName, email, phone, streetAddress, cityId, stateId, postalCode } = req.body;
 
       const address = await addressRepository.getAddressById(addressId);
@@ -125,7 +125,7 @@ class AddressController {
   async deleteAddress(req, res, next) {
     try {
       const { addressId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const address = await addressRepository.getAddressById(addressId);
 
@@ -166,7 +166,7 @@ class AddressController {
   async setDefaultAddress(req, res, next) {
     try {
       const { addressId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const address = await addressRepository.getAddressById(addressId);
 
@@ -202,7 +202,7 @@ class AddressController {
   // Get default address
   async getDefaultAddress(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const address = await addressRepository.getDefaultAddress(userId);
 
       res.status(STATUS_CODES.OK).json({

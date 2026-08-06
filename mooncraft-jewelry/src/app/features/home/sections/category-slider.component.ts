@@ -31,12 +31,8 @@ import { Category } from '../../../core/models';
                   [alt]="category.name"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
-                <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
-                  <div class="text-center text-white">
-                    <p class="font-semibold text-sm">{{ category.name }}</p>
-                  </div>
-                </div>
               </div>
+              <p class="text-center font-semibold text-sm text-gray-900 mt-2 group-hover:text-rose-500 transition-colors">{{ category.name }}</p>
             </div>
           </div>
         </div>

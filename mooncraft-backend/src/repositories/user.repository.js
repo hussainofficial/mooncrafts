@@ -34,6 +34,41 @@ class UserRepository {
     }
   }
 
+  async setPasswordResetToken(userId, hashedToken, expiresAt) {
+    const connection = await getConnection();
+    try {
+      const query = 'UPDATE users SET reset_password_token = ?, reset_password_expires = ? WHERE id = ?';
+      await connection.execute(query, [hashedToken, expiresAt, userId]);
+    } finally {
+      connection.release();
+    }
+  }
+
+  async findByResetToken(hashedToken) {
+    const connection = await getConnection();
+    try {
+      const query = 'SELECT * FROM users WHERE reset_password_token = ? AND reset_password_expires > NOW()';
+      const [rows] = await connection.execute(query, [hashedToken]);
+      return rows[0] || null;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async resetPassword(userId, hashedPassword) {
+    const connection = await getConnection();
+    try {
+      const query = `
+        UPDATE users
+        SET password_hash = ?, reset_password_token = NULL, reset_password_expires = NULL
+        WHERE id = ?
+      `;
+      await connection.execute(query, [hashedPassword, userId]);
+    } finally {
+      connection.release();
+    }
+  }
+
   async changePassword(userId, newPassword) {
     const connection = await getConnection();
     try {

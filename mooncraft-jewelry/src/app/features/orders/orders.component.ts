@@ -1,13 +1,33 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { CheckoutService, OrderDetails } from '../../core/services/checkout.service';
+import { OrderService, Order } from '../../core/services/order.service';
+import { ReviewService } from '../../core/services/review.service';
 import { HeaderComponent } from '../home/components/header.component';
+import { AddReviewModalComponent } from '../../shared/components/add-review-modal.component';
+
+const STATUS_STEPS = ['pending', 'processing', 'shipped', 'delivered'];
+
+const STATUS_BADGE_CLASSES: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  processing: 'bg-blue-100 text-blue-800',
+  shipped: 'bg-purple-100 text-purple-800',
+  delivered: 'bg-green-100 text-green-800',
+  cancelled: 'bg-red-100 text-red-800',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Pending',
+  processing: 'Processing',
+  shipped: 'Shipped',
+  delivered: '✓ Delivered',
+  cancelled: 'Cancelled',
+};
 
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, HeaderComponent],
+  imports: [CommonModule, HeaderComponent, AddReviewModalComponent],
   template: `
     <!-- Header -->
     <app-header></app-header>
@@ -24,8 +44,11 @@ import { HeaderComponent } from '../home/components/header.component';
       </div>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <!-- Loading -->
+        <div *ngIf="loading()" class="text-center py-16 text-gray-500">Loading your orders...</div>
+
         <!-- Empty State -->
-        <div *ngIf="orders().length === 0" class="text-center py-16 bg-white rounded-lg shadow">
+        <div *ngIf="!loading() && orders().length === 0" class="text-center py-16 bg-white rounded-lg shadow">
           <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
@@ -37,87 +60,46 @@ import { HeaderComponent } from '../home/components/header.component';
         </div>
 
         <!-- Orders List -->
-        <div *ngIf="orders().length > 0" class="space-y-6">
-          <!-- Order Card -->
+        <div *ngIf="!loading() && orders().length > 0" class="space-y-6">
           <div *ngFor="let order of orders()" class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
             <!-- Order Header -->
             <div class="border-b p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
-                  <h2 class="text-base sm:text-lg font-bold text-gray-900">Order #{{ order.orderId }}</h2>
-                  <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                    ✓ Delivered
+                  <h2 class="text-base sm:text-lg font-bold text-gray-900">Order #{{ order.id }}</h2>
+                  <span class="px-3 py-1 rounded-full text-sm font-semibold" [ngClass]="statusBadgeClass(order.status)">
+                    {{ statusLabel(order.status) }}
                   </span>
                 </div>
-                <p class="text-sm text-gray-600">
-                  Placed on {{ formatDate(order.timestamp) }}
-                </p>
+                <p class="text-sm text-gray-600">Placed on {{ formatDate(order.created_at) }}</p>
               </div>
               <div class="text-left sm:text-right">
                 <p class="text-sm text-gray-600">Order Total</p>
-                <p class="text-xl sm:text-2xl font-bold text-rose-600">₹{{ order.amount }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-rose-600">₹{{ order.total_amount }}</p>
               </div>
             </div>
 
             <!-- Order Items -->
             <div class="p-4 sm:p-6 border-b">
-              <h3 class="font-semibold text-gray-900 mb-4">Items ({{ order.cartItems.length }})</h3>
+              <h3 class="font-semibold text-gray-900 mb-4">Items ({{ order.items.length }})</h3>
               <div class="space-y-3">
-                <div *ngFor="let item of order.cartItems" class="flex items-center gap-3 sm:gap-4 pb-3 border-b last:border-b-0">
-                  <img [src]="item.product.image" [alt]="item.product.name" class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0">
+                <div *ngFor="let item of order.items" class="flex items-center gap-3 sm:gap-4 pb-3 border-b last:border-b-0">
+                  <img [src]="item.product_image" [alt]="item.product_name" class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0">
                   <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-gray-900 truncate">{{ item.product.name }}</p>
+                    <p class="font-semibold text-gray-900 truncate">{{ item.product_name }}</p>
                     <p class="text-sm text-gray-600">Qty: {{ item.quantity }}</p>
                   </div>
-                  <p class="font-bold text-gray-900 flex-shrink-0">₹{{ item.product.price * item.quantity }}</p>
+                  <p class="font-bold text-gray-900 flex-shrink-0">₹{{ item.price * item.quantity }}</p>
                 </div>
-              </div>
-            </div>
-
-            <!-- Order Details & Actions -->
-            <div class="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-              <!-- Shipping Info -->
-              <div>
-                <p class="text-sm text-gray-600 font-semibold mb-2">Shipping Address</p>
-                <p class="text-sm text-gray-900 font-semibold">{{ order.shippingAddress.fullName }}</p>
-                <p class="text-xs text-gray-600">{{ order.shippingAddress.address }}</p>
-                <p class="text-xs text-gray-600">{{ order.shippingAddress.city }}, {{ order.shippingAddress.state }}</p>
-                <p class="text-xs text-gray-600">{{ order.shippingAddress.postalCode }}</p>
-              </div>
-
-              <!-- Delivery Info -->
-              <div>
-                <p class="text-sm text-gray-600 font-semibold mb-2">Delivery Method</p>
-                <p class="text-sm text-gray-900 font-semibold">{{ order.deliveryMethod.name }}</p>
-                <p class="text-xs text-gray-600">{{ order.deliveryMethod.description }}</p>
-                <p class="text-xs text-blue-600 font-semibold mt-2">
-                  Est. Delivery: {{ order.deliveryMethod.estimatedDays }} days
-                </p>
-              </div>
-
-              <!-- Payment Info -->
-              <div>
-                <p class="text-sm text-gray-600 font-semibold mb-2">Payment Method</p>
-                <p class="text-sm text-gray-900 font-semibold">{{ order.paymentMethod }}</p>
-                <p class="text-xs text-gray-600 mt-2">Transaction ID:</p>
-                <p class="text-xs font-mono text-gray-700 truncate">{{ order.transactionId }}</p>
               </div>
             </div>
 
             <!-- Order Footer with Actions -->
             <div class="p-4 sm:p-6 bg-gray-50 rounded-b-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t">
-              <div class="flex items-center gap-2 text-sm">
-                <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span class="text-gray-700">Order confirmed and paid</span>
+              <div class="flex items-center gap-2 text-sm text-gray-700">
+                <span>Payment: {{ order.payment_method }}</span>
               </div>
               <div class="flex gap-3">
-                <button
-                  (click)="trackOrder(order)"
-                  class="flex-1 sm:flex-none px-4 sm:px-6 py-2 border-2 border-rose-500 text-rose-600 rounded-lg hover:bg-rose-50 font-semibold transition-colors text-sm sm:text-base">
-                  Track Order
-                </button>
                 <button
                   (click)="viewOrderDetails(order)"
                   class="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors text-sm sm:text-base">
@@ -136,9 +118,7 @@ import { HeaderComponent } from '../home/components/header.component';
         <!-- Modal Header -->
         <div class="sticky top-0 bg-white border-b p-4 sm:p-6 flex items-center justify-between">
           <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Order Details</h2>
-          <button
-            (click)="closeDetailsModal()"
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <button (click)="closeDetailsModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -147,59 +127,67 @@ import { HeaderComponent } from '../home/components/header.component';
 
         <!-- Modal Content -->
         <div class="p-4 sm:p-6 space-y-6">
-          <!-- Order IDs -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Write a Review banner -->
+          <div
+            *ngIf="selectedOrder()!.status === 'delivered' && !checkingReview() && !orderHasReview()"
+            class="bg-gradient-to-r from-rose-500 to-pink-500 rounded-lg p-4 flex items-center justify-between gap-4"
+          >
+            <p class="text-white font-semibold">★ Loved your order? Let others know!</p>
+            <button
+              (click)="openReviewModal()"
+              class="px-4 py-2 bg-white text-rose-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex-shrink-0"
+            >
+              Write a Review
+            </button>
+          </div>
+          <div *ngIf="selectedOrder()!.status === 'delivered' && orderHasReview()" class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <p class="text-green-800 font-semibold">✓ Thanks — you've already reviewed this order.</p>
+          </div>
+
+          <!-- Order Info -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="bg-gray-50 rounded-lg p-4">
               <p class="text-xs text-gray-600 font-semibold mb-1">Order ID</p>
-              <p class="text-lg font-mono font-bold text-gray-900 break-all">{{ selectedOrder()!.orderId }}</p>
+              <p class="text-lg font-mono font-bold text-gray-900">#{{ selectedOrder()!.id }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4">
-              <p class="text-xs text-gray-600 font-semibold mb-1">Transaction ID</p>
-              <p class="text-lg font-mono font-bold text-gray-900 break-all">{{ selectedOrder()!.transactionId }}</p>
-            </div>
-            <div class="bg-gray-50 rounded-lg p-4">
-              <p class="text-xs text-gray-600 font-semibold mb-1">Payment ID</p>
-              <p class="text-lg font-mono font-bold text-gray-900 break-all">{{ selectedOrder()!.paymentId }}</p>
+              <p class="text-xs text-gray-600 font-semibold mb-1">Status</p>
+              <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold" [ngClass]="statusBadgeClass(selectedOrder()!.status)">
+                {{ statusLabel(selectedOrder()!.status) }}
+              </span>
             </div>
           </div>
 
-          <!-- Shipping Address -->
-          <div>
-            <h3 class="font-bold text-gray-900 mb-3">Shipping Address</h3>
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p class="font-semibold text-gray-900">{{ selectedOrder()!.shippingAddress.fullName }}</p>
-              <p class="text-gray-600 mt-2">{{ selectedOrder()!.shippingAddress.address }}</p>
-              <p class="text-gray-600">{{ selectedOrder()!.shippingAddress.city }}, {{ selectedOrder()!.shippingAddress.state }} {{ selectedOrder()!.shippingAddress.postalCode }}</p>
-              <p class="text-gray-600">{{ selectedOrder()!.shippingAddress.country }}</p>
-              <p class="text-gray-600 mt-3">📱 {{ selectedOrder()!.shippingAddress.phone }}</p>
-              <p class="text-gray-600">✉️ {{ selectedOrder()!.shippingAddress.email }}</p>
-            </div>
-          </div>
-
-          <!-- Delivery Info -->
-          <div>
-            <h3 class="font-bold text-gray-900 mb-3">Delivery Method</h3>
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p class="font-semibold text-gray-900">{{ selectedOrder()!.deliveryMethod.name }}</p>
-              <p class="text-sm text-gray-600 mt-2">{{ selectedOrder()!.deliveryMethod.description }}</p>
-              <p class="text-sm font-semibold text-blue-700 mt-3">
-                Estimated Delivery: {{ selectedOrder()!.deliveryMethod.estimatedDays }} business days
-              </p>
+          <!-- Status Progress -->
+          <div *ngIf="selectedOrder()!.status !== 'cancelled'">
+            <h3 class="font-bold text-gray-900 mb-3">Order Progress</h3>
+            <div class="flex items-center">
+              <ng-container *ngFor="let step of statusSteps; let i = index; let last = last">
+                <div class="flex flex-col items-center">
+                  <div
+                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    [ngClass]="isStepComplete(step) ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'"
+                  >
+                    {{ isStepComplete(step) ? '✓' : i + 1 }}
+                  </div>
+                  <p class="text-xs text-gray-600 mt-1 text-center">{{ statusLabels[step] }}</p>
+                </div>
+                <div *ngIf="!last" class="flex-1 h-1 mx-1" [ngClass]="isStepComplete(step) ? 'bg-green-500' : 'bg-gray-200'"></div>
+              </ng-container>
             </div>
           </div>
 
           <!-- Order Items Detail -->
           <div>
-            <h3 class="font-bold text-gray-900 mb-3">Items ({{ selectedOrder()!.cartItems.length }})</h3>
+            <h3 class="font-bold text-gray-900 mb-3">Items ({{ selectedOrder()!.items.length }})</h3>
             <div class="space-y-3">
-              <div *ngFor="let item of selectedOrder()!.cartItems" class="flex items-start gap-4 pb-4 border-b last:border-b-0">
-                <img [src]="item.product.image" [alt]="item.product.name" class="w-20 h-20 rounded-lg object-cover">
+              <div *ngFor="let item of selectedOrder()!.items" class="flex items-start gap-4 pb-4 border-b last:border-b-0">
+                <img [src]="item.product_image" [alt]="item.product_name" class="w-20 h-20 rounded-lg object-cover">
                 <div class="flex-1">
-                  <p class="font-semibold text-gray-900">{{ item.product.name }}</p>
-                  <p class="text-sm text-gray-600 mt-1">{{ item.product.description }}</p>
+                  <p class="font-semibold text-gray-900">{{ item.product_name }}</p>
                   <p class="text-sm text-gray-600 mt-2">
-                    <span class="font-semibold">₹{{ item.product.price }}</span> x {{ item.quantity }} =
-                    <span class="font-bold text-gray-900">₹{{ item.product.price * item.quantity }}</span>
+                    <span class="font-semibold">₹{{ item.price }}</span> x {{ item.quantity }} =
+                    <span class="font-bold text-gray-900">₹{{ item.price * item.quantity }}</span>
                   </p>
                 </div>
               </div>
@@ -210,21 +198,9 @@ import { HeaderComponent } from '../home/components/header.component';
           <div>
             <h3 class="font-bold text-gray-900 mb-3">Order Summary</h3>
             <div class="space-y-2 bg-gray-50 rounded-lg p-4">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Subtotal</span>
-                <span class="font-semibold">₹{{ getOrderSubtotal(selectedOrder()!) }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Tax (18%)</span>
-                <span class="font-semibold">₹{{ Math.round(getOrderSubtotal(selectedOrder()!) * 0.18) }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Delivery</span>
-                <span class="font-semibold">₹{{ selectedOrder()!.deliveryMethod.price }}</span>
-              </div>
-              <div class="border-t pt-2 flex justify-between text-lg font-bold">
+              <div class="flex justify-between text-lg font-bold">
                 <span>Total Paid</span>
-                <span class="text-rose-600">₹{{ selectedOrder()!.amount }}</span>
+                <span class="text-rose-600">₹{{ selectedOrder()!.total_amount }}</span>
               </div>
             </div>
           </div>
@@ -235,17 +211,11 @@ import { HeaderComponent } from '../home/components/header.component';
             <div class="space-y-2 bg-green-50 rounded-lg p-4 border border-green-200">
               <div class="flex justify-between">
                 <span class="text-gray-700">Payment Method</span>
-                <span class="font-semibold">{{ selectedOrder()!.paymentMethod }}</span>
+                <span class="font-semibold">{{ selectedOrder()!.payment_method }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Order Date</span>
-                <span class="font-semibold">{{ formatDate(selectedOrder()!.timestamp) }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-700">Status</span>
-                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                  ✓ Completed
-                </span>
+                <span class="font-semibold">{{ formatDate(selectedOrder()!.created_at) }}</span>
               </div>
             </div>
           </div>
@@ -253,11 +223,6 @@ import { HeaderComponent } from '../home/components/header.component';
 
         <!-- Modal Footer -->
         <div class="border-t bg-gray-50 p-6 flex gap-3 rounded-b-xl">
-          <button
-            (click)="downloadInvoice(selectedOrder()!)"
-            class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-semibold transition-colors">
-            📥 Download Invoice
-          </button>
           <button
             (click)="closeDetailsModal()"
             class="flex-1 px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
@@ -267,157 +232,61 @@ import { HeaderComponent } from '../home/components/header.component';
       </div>
     </div>
 
-    <!-- Track Order Modal -->
-    <div *ngIf="showTrackingModal() && selectedOrder()" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <!-- Modal Header -->
-        <div class="border-b p-6 flex items-center justify-between">
-          <h2 class="text-2xl font-bold text-gray-900">Track Order #{{ selectedOrder()!.orderId }}</h2>
-          <button
-            (click)="closeTrackingModal()"
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Tracking Timeline -->
-        <div class="p-8">
-          <div class="space-y-6">
-            <!-- Order Placed -->
-            <div class="flex gap-4">
-              <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
-                <div class="w-1 h-12 bg-green-500 mt-2"></div>
-              </div>
-              <div>
-                <h3 class="font-bold text-gray-900">Order Placed</h3>
-                <p class="text-sm text-gray-600">{{ formatDate(selectedOrder()!.timestamp) }}</p>
-                <p class="text-sm text-gray-600 mt-1">Your order has been confirmed</p>
-              </div>
-            </div>
-
-            <!-- Payment Confirmed -->
-            <div class="flex gap-4">
-              <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
-                <div class="w-1 h-12 bg-green-500 mt-2"></div>
-              </div>
-              <div>
-                <h3 class="font-bold text-gray-900">Payment Confirmed</h3>
-                <p class="text-sm text-gray-600">{{ getPaymentDate(selectedOrder()!.timestamp) }}</p>
-                <p class="text-sm text-gray-600 mt-1">Payment via {{ selectedOrder()!.paymentMethod }} received</p>
-              </div>
-            </div>
-
-            <!-- Item Packed -->
-            <div class="flex gap-4">
-              <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
-                <div class="w-1 h-12 bg-green-500 mt-2"></div>
-              </div>
-              <div>
-                <h3 class="font-bold text-gray-900">Item Packed</h3>
-                <p class="text-sm text-gray-600">{{ getPackedDate(selectedOrder()!.timestamp) }}</p>
-                <p class="text-sm text-gray-600 mt-1">Your item is being packed for shipment</p>
-              </div>
-            </div>
-
-            <!-- Shipped -->
-            <div class="flex gap-4">
-              <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
-                <div class="w-1 h-12 bg-green-500 mt-2"></div>
-              </div>
-              <div>
-                <h3 class="font-bold text-gray-900">Shipped</h3>
-                <p class="text-sm text-gray-600">{{ getShippedDate(selectedOrder()!.timestamp) }}</p>
-                <p class="text-sm text-gray-600 mt-1">
-                  Tracking #: <span class="font-mono font-semibold">LUX{{ selectedOrder()!.orderId.substring(3) }}</span>
-                </p>
-              </div>
-            </div>
-
-            <!-- In Transit -->
-            <div class="flex gap-4">
-              <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
-                <div class="w-1 h-12 bg-green-500 mt-2"></div>
-              </div>
-              <div>
-                <h3 class="font-bold text-gray-900">In Transit</h3>
-                <p class="text-sm text-gray-600">{{ getInTransitDate(selectedOrder()!.timestamp) }}</p>
-                <p class="text-sm text-gray-600 mt-1">Your package is on its way</p>
-              </div>
-            </div>
-
-            <!-- Delivery -->
-            <div class="flex gap-4">
-              <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
-              </div>
-              <div>
-                <h3 class="font-bold text-gray-900">Delivered</h3>
-                <p class="text-sm text-gray-600">{{ getDeliveryDate(selectedOrder()!.timestamp) }}</p>
-                <p class="text-sm text-gray-600 mt-1">Package delivered to {{ selectedOrder()!.shippingAddress.address }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Delivery Address -->
-          <div class="mt-8 pt-8 border-t">
-            <h3 class="font-bold text-gray-900 mb-3">Delivery Address</h3>
-            <div class="bg-blue-50 rounded-lg p-4">
-              <p class="font-semibold text-gray-900">{{ selectedOrder()!.shippingAddress.fullName }}</p>
-              <p class="text-gray-600 mt-2">{{ selectedOrder()!.shippingAddress.address }}</p>
-              <p class="text-gray-600">{{ selectedOrder()!.shippingAddress.city }}, {{ selectedOrder()!.shippingAddress.state }} {{ selectedOrder()!.shippingAddress.postalCode }}</p>
-              <p class="text-gray-600">{{ selectedOrder()!.shippingAddress.country }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="border-t bg-gray-50 p-6 flex gap-3 rounded-b-xl">
-          <button
-            (click)="closeTrackingModal()"
-            class="flex-1 px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-semibold transition-colors">
-            Close Tracking
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Write a Review Modal -->
+    <app-add-review-modal
+      [isOpen]="showReviewModal()"
+      [orderId]="selectedOrder()?.id || 0"
+      (closed)="closeReviewModal()"
+      (submitted)="onReviewSubmitted()"
+    ></app-add-review-modal>
   `,
 })
 export class OrdersComponent implements OnInit {
+  orders = signal<Order[]>([]);
+  loading = signal(false);
+
   showDetailsModal = signal(false);
-  showTrackingModal = signal(false);
-  selectedOrder = signal<OrderDetails | null>(null);
-  Math = Math;
+  selectedOrder = signal<Order | null>(null);
+  orderHasReview = signal(false);
+  checkingReview = signal(false);
+  showReviewModal = signal(false);
+
+  statusSteps = STATUS_STEPS;
+  statusLabels = STATUS_LABELS;
 
   constructor(
-    private checkoutService: CheckoutService,
+    private orderService: OrderService,
+    private reviewService: ReviewService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    // Orders are loaded from CheckoutService
+    this.loading.set(true);
+    this.orderService.getUserOrders().subscribe({
+      next: (response) => {
+        this.orders.set(response.data || []);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      },
+    });
   }
 
-  orders() {
-    return this.checkoutService.getOrders();
+  statusBadgeClass(status: string): string {
+    return STATUS_BADGE_CLASSES[status] || 'bg-gray-100 text-gray-800';
+  }
+
+  statusLabel(status: string): string {
+    return STATUS_LABELS[status] || status;
+  }
+
+  isStepComplete(step: string): boolean {
+    const order = this.selectedOrder();
+    if (!order) {
+      return false;
+    }
+    return this.statusSteps.indexOf(step) <= this.statusSteps.indexOf(order.status);
   }
 
   formatDate(dateString: string): string {
@@ -431,43 +300,18 @@ export class OrdersComponent implements OnInit {
     });
   }
 
-  getPaymentDate(dateString: string): string {
-    const date = new Date(dateString);
-    date.setHours(date.getHours() + 0.5);
-    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-
-  getPackedDate(dateString: string): string {
-    const date = new Date(dateString);
-    date.setHours(date.getHours() + 2);
-    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-
-  getShippedDate(dateString: string): string {
-    const date = new Date(dateString);
-    date.setHours(date.getHours() + 4);
-    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-
-  getInTransitDate(dateString: string): string {
-    const date = new Date(dateString);
-    date.setHours(date.getHours() + 8);
-    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-
-  getDeliveryDate(dateString: string): string {
-    const date = new Date(dateString);
-    date.setDate(date.getDate() + 5); // Default 5 days delivery
-    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-
-  getOrderSubtotal(order: OrderDetails): number {
-    return order.cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-  }
-
-  viewOrderDetails(order: OrderDetails) {
+  viewOrderDetails(order: Order) {
     this.selectedOrder.set(order);
     this.showDetailsModal.set(true);
+    this.orderHasReview.set(false);
+
+    if (order.status === 'delivered') {
+      this.checkingReview.set(true);
+      this.reviewService.checkOrderReviewed(order.id).then((hasReviewed) => {
+        this.orderHasReview.set(hasReviewed);
+        this.checkingReview.set(false);
+      });
+    }
   }
 
   closeDetailsModal() {
@@ -475,75 +319,16 @@ export class OrdersComponent implements OnInit {
     this.selectedOrder.set(null);
   }
 
-  trackOrder(order: OrderDetails) {
-    this.selectedOrder.set(order);
-    this.showTrackingModal.set(true);
+  openReviewModal() {
+    this.showReviewModal.set(true);
   }
 
-  closeTrackingModal() {
-    this.showTrackingModal.set(false);
-    this.selectedOrder.set(null);
+  closeReviewModal() {
+    this.showReviewModal.set(false);
   }
 
-  downloadInvoice(order: OrderDetails) {
-    const invoiceContent = this.generateInvoice(order);
-    const element = document.createElement('a');
-    element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(invoiceContent);
-    element.download = `MOONCRAFT-Invoice-${order.orderId}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  }
-
-  private generateInvoice(order: OrderDetails): string {
-    const subtotal = this.getOrderSubtotal(order);
-    const tax = Math.round(subtotal * 0.18);
-    const total = order.amount;
-
-    return `
-MOONCRAFT JEWELRY - Invoice
-================================
-
-Order ID: ${order.orderId}
-Transaction ID: ${order.transactionId}
-Payment ID: ${order.paymentId}
-Date: ${this.formatDate(order.timestamp)}
-
-CUSTOMER DETAILS
-================================
-Name: ${order.shippingAddress.fullName}
-Email: ${order.shippingAddress.email}
-Phone: ${order.shippingAddress.phone}
-
-SHIPPING ADDRESS
-================================
-${order.shippingAddress.address}
-${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.postalCode}
-${order.shippingAddress.country}
-
-ITEMS
-================================
-${order.cartItems.map(item => `${item.product.name} x${item.quantity} = ₹${item.product.price * item.quantity}`).join('\n')}
-
-ORDER SUMMARY
-================================
-Subtotal:           ₹${subtotal}
-Tax (18%):          ₹${tax}
-Delivery Charge:    ₹${order.deliveryMethod.price}
-Total Paid:         ₹${total}
-
-DELIVERY METHOD
-================================
-${order.deliveryMethod.name}
-${order.deliveryMethod.description}
-Est. Delivery: ${order.deliveryMethod.estimatedDays} days
-
-PAYMENT METHOD
-================================
-${order.paymentMethod}
-
-Status: Completed
-Thank you for your purchase!
-    `.trim();
+  onReviewSubmitted() {
+    this.orderHasReview.set(true);
+    this.showReviewModal.set(false);
   }
 }

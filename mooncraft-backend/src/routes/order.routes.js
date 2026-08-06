@@ -1,13 +1,14 @@
 const express = require('express');
 const { param, body, query } = require('express-validator');
 const orderController = require('../controllers/order.controller');
-const { authMiddleware, adminMiddleware } = require('../middleware/auth.middleware');
+const { authMiddleware, optionalAuthMiddleware, adminMiddleware } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
 // Create order (Public - Guest or Logged In Users)
 router.post(
   '/',
+  optionalAuthMiddleware,
   [
     body('items').isArray().notEmpty(),
     body('items.*.productId').isInt(),

@@ -39,7 +39,10 @@ import { LoaderService } from '../../core/services/loader.service';
 
           <!-- Password -->
           <div>
-            <label class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-semibold text-gray-900">Password</label>
+              <a href="/forgot-password" class="text-sm text-rose-500 hover:text-rose-600 font-semibold">Forgot password?</a>
+            </div>
             <input
               type="password"
               [(ngModel)]="password"

@@ -103,6 +103,59 @@ class AuthController {
       next(error);
     }
   }
+
+  async forgotPassword(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
+          success: false,
+          message: MESSAGES.BAD_REQUEST,
+          errors: errors.array(),
+        });
+      }
+
+      const { email } = req.body;
+      const result = await authService.forgotPassword(email);
+
+      // Always 200, regardless of whether the email exists (anti-enumeration).
+      res.status(STATUS_CODES.OK).json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async resetPassword(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
+          success: false,
+          message: MESSAGES.BAD_REQUEST,
+          errors: errors.array(),
+        });
+      }
+
+      const { token, newPassword } = req.body;
+      const result = await authService.resetPassword(token, newPassword);
+
+      res.status(STATUS_CODES.OK).json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      if (error.message === 'Invalid or expired password reset token.') {
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
+          success: false,
+          message: error.message,
+        });
+      }
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();

@@ -17,6 +17,8 @@ import { OrdersComponent } from './features/orders/orders.component';
 import { ArchitectureDashboardComponent } from './features/analysis/architecture-dashboard.component';
 import { FormValidationDemoComponent } from './features/demo/form-validation-demo.component';
 import { RegisterNewComponent } from './features/test/register-new.component';
+import { ForgotPasswordComponent } from './features/auth/forgot-password.component';
+import { ResetPasswordComponent } from './features/auth/reset-password.component';
 import { LocationDebugComponent } from './features/test/location-debug.component';
 import { AdminOnlyGuard } from './core/guards/admin-only.guard';
 import { PublicOnlyGuard } from './core/guards/public-only.guard';
@@ -42,6 +44,8 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-new', component: RegisterNewComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
 
   // Admin Routes (Admin Only)
   { path: 'admin/login', component: AdminLoginComponent },

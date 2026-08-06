@@ -15,11 +15,12 @@ import { OrderManagementService, Order } from '../../core/services/order-managem
 import { PaymentManagementService, Payment } from '../../core/services/payment-management.service';
 import { BlobImageService } from '../../core/services/blob-image.service';
 import { Product } from '../../core/models';
+import { AdminReviewApprovalComponent } from './admin-review-approval.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, AdminReviewApprovalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- Authorization Check -->
@@ -181,7 +182,20 @@ import { Product } from '../../core/models';
             class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
             Payments
           </button>
+          <button
+            (click)="switchTab('reviews')"
+            [class.bg-rose-500]="activeTab() === 'reviews'"
+            [class.text-white]="activeTab() === 'reviews'"
+            [class.bg-gray-200]="activeTab() !== 'reviews'"
+            class="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-semibold transition-colors hover:shadow-md">
+            Reviews
+          </button>
         </div>
+      </div>
+
+      <!-- Reviews Moderation Tab -->
+      <div *ngIf="activeTab() === 'reviews'">
+        <app-admin-review-approval></app-admin-review-approval>
       </div>
 
       <!-- Products List Tab -->
@@ -563,8 +577,8 @@ import { Product } from '../../core/models';
                     [(ngModel)]="productForm.isFeatured"
                     name="isFeatured"
                     class="w-5 h-5 text-rose-500 rounded focus:ring-2 focus:ring-rose-500">
-                  <span class="text-sm font-medium text-gray-900">✨ Featured</span>
-                  <span class="text-xs text-gray-500">(Show in Featured Products section)</span>
+                  <span class="text-sm font-medium text-gray-900">✨ Coming Soon</span>
+                  <span class="text-xs text-gray-500">(Show in Coming Soon Products section)</span>
                 </label>
               </div>
             </div>
@@ -1485,7 +1499,7 @@ import { Product } from '../../core/models';
   `,
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
-  activeTab = signal<'products' | 'add' | 'categories' | 'materials' | 'users' | 'analytics' | 'orders' | 'payments'>('products');
+  activeTab = signal<'products' | 'add' | 'categories' | 'materials' | 'users' | 'analytics' | 'orders' | 'payments' | 'reviews'>('products');
 
   // Message signals
   errorMessage = signal<string | null>(null);
@@ -1687,7 +1701,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.currentPage.set(1);
   }
 
-  switchTab(tab: 'products' | 'add' | 'categories' | 'materials' | 'users' | 'analytics' | 'orders' | 'payments') {
+  switchTab(tab: 'products' | 'add' | 'categories' | 'materials' | 'users' | 'analytics' | 'orders' | 'payments' | 'reviews') {
     this.activeTab.set(tab);
     this.resetProductForm();
   }

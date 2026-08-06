@@ -17,23 +17,46 @@ export interface CreateOrderRequest {
   totalAmount: number;
 }
 
+export interface OrderItemResponse {
+  id: number;
+  order_id: number;
+  product_id: number;
+  quantity: number;
+  price: number;
+  created_at: string;
+  product_name: string;
+  product_image: string;
+}
+
 export interface Order {
   id: number;
-  userId: number;
-  items: OrderItem[];
-  totalAmount: number;
+  user_id: number | null;
+  items: OrderItemResponse[];
+  total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  paymentMethod: string;
-  shippingAddressId: number;
-  billingAddressId: number;
-  createdAt: string;
-  updatedAt: string;
+  payment_method: string;
+  shipping_address_id: number | null;
+  billing_address_id: number | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface OrderResponse {
   success: boolean;
   message: string;
   data: Order;
+}
+
+export interface OrderListResponse {
+  success: boolean;
+  message: string;
+  data: Order[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
 }
 
 @Injectable({
@@ -75,7 +98,7 @@ export class OrderService {
 
   // Get user's orders
   getUserOrders(page: number = 1, limit: number = 20) {
-    return this.http.get<any>(
+    return this.http.get<OrderListResponse>(
       `${this.API_URL}/user/my-orders?page=${page}&limit=${limit}`,
       { headers: this.getHeaders() }
     );

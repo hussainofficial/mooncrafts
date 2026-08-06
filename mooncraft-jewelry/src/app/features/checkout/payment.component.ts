@@ -308,8 +308,10 @@ export class PaymentComponent implements OnInit {
         orderRequest.guestName = shippingAddr.fullName;
         console.log('👥 Guest checkout with email:', shippingAddr.email);
       } else {
-        orderRequest.shippingAddressId = 1; // TODO: Get from actual address selection
-        orderRequest.billingAddressId = 1;   // TODO: Get from actual address selection
+        // No address book / selection UI exists yet, so we don't send
+        // shippingAddressId/billingAddressId here (the backend treats them as
+        // optional). Sending a hardcoded, likely-nonexistent ID would violate
+        // the orders.shipping_address_id FK constraint.
         console.log('👤 Logged in user checkout');
       }
 

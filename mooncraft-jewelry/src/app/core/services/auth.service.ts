@@ -12,6 +12,8 @@ export interface User {
   email: string;
   name: string;
   role: 'user' | 'admin';
+  phone?: string;
+  created_at?: string;
 }
 
 export interface AuthResponse {
@@ -232,5 +234,13 @@ export class AuthService {
 
   isAdminUser(): boolean {
     return this.isAdmin();
+  }
+
+  requestPasswordReset(email: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.API_URL}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.API_URL}/reset-password`, { token, newPassword });
   }
 }

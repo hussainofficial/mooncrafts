@@ -405,7 +405,7 @@ import { LoaderService } from '../../core/services/loader.service';
                   <th class="px-6 py-3 text-center text-sm font-semibold">Trending</th>
                   <th class="px-6 py-3 text-center text-sm font-semibold">New Arrival</th>
                   <th class="px-6 py-3 text-center text-sm font-semibold">Best Seller</th>
-                  <th class="px-6 py-3 text-center text-sm font-semibold">Featured</th>
+                  <th class="px-6 py-3 text-center text-sm font-semibold">Coming Soon</th>
                 </tr>
               </thead>
               <tbody>

@@ -32,7 +32,7 @@ import { CollectionService } from '../../../core/services/collection.service';
           >
             <div class="relative overflow-hidden rounded-2xl aspect-square bg-gray-100">
               <img
-                [src]="collection.image || getPlaceholder(collection.name)"
+                [src]="collection.image_url || collection.image || getPlaceholder(collection.name)"
                 [alt]="collection.name"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />

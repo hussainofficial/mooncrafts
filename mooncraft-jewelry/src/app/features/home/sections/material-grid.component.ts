@@ -3,6 +3,17 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MaterialService } from '../../../core/services/material.service';
 
+const MATERIAL_IMAGES: Record<string, string> = {
+  diamond: '/diamond.png',
+  pearl: '/pearl.png',
+  emerald: '/Emerald.png',
+  platinum: '/Platinum.png',
+  ruby: '/Ruby.png',
+  silver: '/Silver.png',
+  sapphire: '/sapphire.png',
+  gold: '/gold.png',
+};
+
 @Component({
   selector: 'app-material-grid',
   standalone: true,
@@ -30,7 +41,7 @@ import { MaterialService } from '../../../core/services/material.service';
           >
             <div class="relative overflow-hidden rounded-full aspect-square bg-gray-100 mb-3 group-hover:shadow-lg transition-all">
               <img
-                [src]="material.image || getPlaceholder(material.name)"
+                [src]="getMaterialImage(material)"
                 [alt]="material.name"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
@@ -71,6 +82,10 @@ export class MaterialGridComponent {
     public materialService: MaterialService,
     private router: Router
   ) {}
+
+  getMaterialImage(material: any): string {
+    return material.image || MATERIAL_IMAGES[material.name?.toLowerCase()] || this.getPlaceholder(material.name);
+  }
 
   getPlaceholder(text: string): string {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">

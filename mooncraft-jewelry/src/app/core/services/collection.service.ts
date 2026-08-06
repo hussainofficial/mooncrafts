@@ -9,6 +9,7 @@ export interface Collection {
   name: string;
   slug: string;
   image?: string;
+  image_url?: string;
   description?: string;
   is_active: boolean;
   created_at?: string;

@@ -8,7 +8,7 @@ class OrderController {
       const { items, shippingAddressId, billingAddressId, paymentMethod, totalAmount, guestEmail, guestPhone, guestName } = req.body;
 
       // Determine if user is logged in or guest
-      const userId = req.user?.id || null;
+      const userId = req.user?.userId || null;
       const isGuest = !userId;
 
       let orderData = {
@@ -52,7 +52,7 @@ class OrderController {
   async getOrderById(req, res, next) {
     try {
       const { orderId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const isAdmin = req.user.role === 'admin';
 
       const order = await orderService.getOrderById(orderId, isAdmin ? null : userId);
@@ -85,7 +85,7 @@ class OrderController {
   // Get user orders
   async getUserOrders(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 20;
       const offset = (page - 1) * limit;
@@ -169,7 +169,7 @@ class OrderController {
   async cancelOrder(req, res, next) {
     try {
       const { orderId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const order = await orderService.cancelOrder(orderId, userId);
 

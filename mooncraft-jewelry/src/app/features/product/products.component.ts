@@ -17,7 +17,7 @@ const FILTER_LABELS: Record<string, string> = {
   trending: 'Trending Now',
   'new-arrivals': 'New Arrivals',
   'best-sellers': 'Best Sellers',
-  featured: 'Featured Products',
+  featured: 'Coming Soon Products',
 };
 
 @Component({
@@ -171,7 +171,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.pageTitle.set(material?.name ? `${material.name} Jewelry` : 'Material');
         this.pageSubtitle.set(material?.description || '');
         const name = (material?.name || '').toLowerCase();
-        this.applyFilter((p) =>
+        this.applySortFirst((p) =>
           (p as any).materialId?.toString() === id.toString() ||
           (!!name && p.material.toLowerCase() === name)
         );
@@ -218,6 +218,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
     const all = this.productService.getProducts();
     const matched = all.filter(predicate);
     this.filteredProducts.set(matched.length > 0 ? matched : all);
+    this.currentPage.set(1);
+    this.cdr.markForCheck();
+  }
+
+  private applySortFirst(predicate: (p: Product) => boolean) {
+    const all = this.productService.getProducts();
+    const matched = all.filter(predicate);
+    const rest = all.filter((p) => !predicate(p));
+    this.filteredProducts.set([...matched, ...rest]);
     this.currentPage.set(1);
     this.cdr.markForCheck();
   }
