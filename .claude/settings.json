@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/forgot-password -H 'Content-Type: application/json' -d '{\"email\":\"saif@gmail.com\"}')",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/forgot-password -H 'Content-Type: application/json' -d '{\"email\":\"doesnotexist@nowhere.com\"}')",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/reset-password -H 'Content-Type: application/json' -d '{\"token\":\"wrongtoken1234567890\",\"newPassword\":\"NewPass@123\"}')",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/reset-password -H 'Content-Type: application/json' -d '{\"token\":\"383587a7829bd66a2412fac320527e3ac207d0bfec122d149b6944c707946275\",\"newPassword\":\"NewPass@123\"}')",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"saif@gmail.com\",\"password\":\"TestUser@123\"}')",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"saif@gmail.com\",\"password\":\"NewPass@123\"}')",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/reset-password -H 'Content-Type: application/json' -d '{\"token\":\"383587a7829bd66a2412fac320527e3ac207d0bfec122d149b6944c707946275\",\"newPassword\":\"AnotherPass@456\"}')",
+      "Bash(curl -s -o /dev/null -w \"Forgot password page: %{http_code}\\\\n\" http://localhost:4200/forgot-password)",
+      "Bash(curl -s -o /dev/null -w \"Reset password page: %{http_code}\\\\n\" http://localhost:4200/reset-password)",
+      "PowerShell(Stop-Process -Id 23312 -Force)",
+      "PowerShell(Stop-Process -Id 11980 -Force -ErrorAction SilentlyContinue)",
+      "Bash(curl -s -X POST http://localhost:5000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"saif@gmail.com\",\"password\":\"UITestPass@123\"}')",
+      "Bash(curl -s -o /dev/null -w \"Bridal image: %{http_code}\\\\n\" \"http://localhost:4200/Bridal%20Collection.png\")",
+      "Bash(git config *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
+    ]
+  }
+}
