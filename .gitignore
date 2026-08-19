@@ -8,6 +8,9 @@ yarn-error.log
 .env.local
 .env.*.local
 
+# Aiven DB CA certificate (per-service, not secret but not needed in repo)
+aiven-ca.pem
+
 # Angular / build output
 dist/
 /tmp
