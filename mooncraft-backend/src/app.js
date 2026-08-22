@@ -21,6 +21,7 @@ const productFlagsRoutes = require('./routes/product-flags.routes');
 const reviewRoutes = require('./routes/review.routes');
 const wishlistRoutes = require('./routes/wishlist.routes');
 const errorHandler = require('./middleware/error.middleware');
+const { pool } = require('../config/database');
 
 const app = express();
 
@@ -54,9 +55,15 @@ app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
 app.use('/api/v1/product-flags', productFlagsRoutes);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
+// Health check endpoint — also pings the DB so a periodic hit here keeps
+// both the server and the free-tier database from going idle and sleeping.
+app.get('/api/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'OK', message: 'Server is running', db: 'connected' });
+  } catch (error) {
+    res.status(503).json({ status: 'ERROR', message: 'Server is running', db: 'unreachable' });
+  }
 });
 
 // 404 handler
